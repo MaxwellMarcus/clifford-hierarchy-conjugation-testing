@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clifford-hierarchy-conjugation-testing"
-version = "0.1.0"
+version = "0.2.0"
 description = "Exact and numerical tools for studying conjugation groups in the Clifford hierarchy"
 readme = "README.md"
 requires-python = ">=3.10"

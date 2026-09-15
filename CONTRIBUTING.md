@@ -13,7 +13,7 @@ python -m pip install -e ".[dev]"
 Before opening a pull request, run:
 
 ```bash
-python -m ruff check src tests
+python -m ruff check src tests examples
 python -m pytest
 ```
 

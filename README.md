@@ -4,7 +4,9 @@
 ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
 
 Research code for exact and numerical analysis of conjugation groups in the
-Clifford hierarchy. The initial case study reproduces checks for the five-qubit
+Clifford hierarchy. It now includes a small public API for dense quantum gates,
+finite projective gate sets, bounded group closure, and iterated conjugation
+groups. The initial case study reproduces checks for the five-qubit
 counterexample in Theorem 8.1 of de Silva and Lautsch,
 [arXiv:2609.11903](https://arxiv.org/abs/2609.11903).
 
@@ -15,12 +17,16 @@ counterexample in Theorem 8.1 of de Silva and Lautsch,
 - A numerical five-qubit conjugation-group analysis that finds an explicit
   non-Clifford witness in the third conjugation group.
 - A separate SymPy script that verifies that witness exactly.
+- Validated, immutable dense `Gate` objects and projectively deduplicated
+  `GateSet` collections.
+- Bounded finite-group and iterated conjugation-group generation whose results
+  distinguish proven closure from a truncated search.
 - Regression tests, continuous integration, packaging metadata, and citation
   information.
 
-The exact finite-field verifier is the maintained library interface. The two
-matrix scripts in `examples/de_silva_lautsch/` are research artifacts: one is
-explicitly numerical, while the other uses exact symbolic arithmetic.
+The matrix API is intended for transparent low-qubit experiments. The two
+counterexample matrix scripts are research artifacts: one is explicitly
+numerical, while the other uses exact symbolic arithmetic.
 
 ## Quick start
 
@@ -32,6 +38,7 @@ source .venv/bin/activate
 python -m pip install -e ".[dev]"
 verify-counterexample
 python -m pytest
+python examples/basic_conjugation_groups.py
 ```
 
 To run the research scripts directly:
@@ -40,6 +47,27 @@ To run the research scripts directly:
 python examples/de_silva_lautsch/analyze_conjugation_groups.py
 python examples/de_silva_lautsch/exact_counterexample_witness.py
 ```
+
+## Basic API
+
+```python
+import numpy as np
+
+from clifford_conjugation import Gate, GateSet, SearchLimits, generate_group
+
+x = Gate("X", [[0, 1], [1, 0]])
+z = Gate("Z", [[1, 0], [0, -1]])
+h = Gate("H", np.array([[1, 1], [1, -1]]) / np.sqrt(2))
+
+closure = generate_group(
+    GateSet([h, z]),
+    limits=SearchLimits(max_elements=100, max_products=1_000),
+)
+assert closure.complete and closure.order == 8
+```
+
+See [the API guide](docs/api.md) for the precise conjugation convention,
+projective-equality policy, iteration methods, and incomplete-search semantics.
 
 ## Expected exact result
 
@@ -52,10 +80,12 @@ contract.
 ## Scope and numerical caution
 
 This repository investigates specific algebraic conditions; it is not a general
-proof assistant for Clifford-hierarchy membership. Results from NumPy use a
-projective canonicalization tolerance and should be confirmed symbolically when
-used as proof. The exact scripts are labeled separately so computational evidence
-is not confused with a theorem.
+proof assistant for Clifford-hierarchy membership. Group generation uses dense
+matrices and is exponential in qubit count and often worse in group size. Every
+search therefore has explicit element and product limits. Results from NumPy use
+a projective canonicalization tolerance and should be confirmed symbolically
+when used as proof. The exact scripts are labeled separately so computational
+evidence is not confused with a theorem.
 
 ## License and citation
 
