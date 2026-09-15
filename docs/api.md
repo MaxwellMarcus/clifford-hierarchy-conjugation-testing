@@ -10,12 +10,101 @@ and has power-of-two dimension. The stored matrix is copied and made read-only.
 `GateSet` requires same-size `Gate` objects and removes duplicates modulo global
 phase while preserving the first representative.
 
+`pauli_generators(n)` constructs the usual projective Pauli generating set in
+the order `X_0, ..., X_(n-1), Z_0, ..., Z_(n-1)`. Qubit zero is the leftmost,
+most-significant Kronecker factor, matching the counterexample scripts.
+`embed_one_qubit_gate(gate, qubit, n)` exposes the same convention for other
+one-qubit gates.
+
 Numerical projective equality is controlled by `ProjectiveConfig`. The
 canonicalization fixes the phase of the first numerically nonzero entry, zeros
 small real and imaginary parts, and rounds the result before hashing. This makes
 small numerical searches reproducible, but approximate equality is not exact
 algebra. Use exact arithmetic to confirm proof-critical witnesses, as the
 counterexample example does.
+
+## Conjugation actions without closure
+
+Use `conjugation_action` when the immediate question is how a gate maps a
+chosen generating set:
+
+```python
+action = conjugation_action(h, pauli_generators(1))
+assert projectively_equal(action.image("X_0").matrix, z.matrix)
+```
+
+A `ConjugationAction` stores exactly one image per named domain generator.
+`image(name_or_index)` retrieves a cell, `as_dict()` returns a name-to-image
+mapping, and `apply_word(["X", "Z"])` evaluates the image of the matrix product
+`X @ Z` using the homomorphism property of conjugation. The empty word maps to
+the identity. None of these operations enumerates the generated group.
+
+For a finite collection of possible conjugators, use an action table:
+
+```python
+table = conjugation_action_table(GateSet([identity, h]), pauli_generators(1))
+assert table.shape == (2, 2)
+hx_image = table.image("H", "X_0")
+generators_for_closure = table.unique_images
+```
+
+Rows are conjugators, columns are probe generators, and `unique_images`
+deduplicates all cells modulo global phase. Construction performs exactly one
+dense conjugation per table cell; it does not call `generate_group`.
+`source_complete=False` records that a table's rows came from only a partial
+earlier search. `generate_conjugation_group` builds and retains this table as
+its `action_table` before attempting closure.
+
+## Projective recognition and algebraic labels
+
+Every `GateSet` is also a named projective reference set.
+`references.match_matrix(matrix)` returns the retained matching `Gate`, or
+`None` if the operator is unknown. Global phase is ignored using the reference
+set's `ProjectiveConfig`.
+
+`projective_pauli_group(n)` creates a catalog with conventional tensor-word
+labels such as `I`, `Y_1`, and `X_0 Z_2`. The catalog contains exactly `4**n`
+dense matrices, so it defaults to a hard limit of 1,024 elements. Raise
+`max_elements` deliberately if a larger dense catalog is appropriate.
+
+When the reference class is specifically the tensor-Pauli group, prefer the
+direct recognizer:
+
+```python
+classification = table.classify_paulis()
+assert classification.preserves_paulis
+assert classification.label("H", "X_0") == "Z_0"
+```
+
+This checks the monomial pattern and relative signs of each dense image rather
+than materializing all `4**n` Paulis. `PauliWord` records the result as binary
+X and Z masks and exposes a conventional tensor-word label. If the columns are
+a complete Pauli generating set, `preserves_paulis` is the usual normalizer
+test that every represented conjugator is Clifford. For an arbitrary subset of
+probes, it means only that the supplied probes have Pauli images.
+
+For a table whose probes are the standard `pauli_generators(n)` in X-then-Z
+order, `classification.symplectic_matrix(conjugator)` returns the induced
+read-only binary matrix. It verifies the symplectic identity before returning.
+`row_preserves_paulis(conjugator)` reports the Pauli-normalizer result for one
+row without conflating it with aggregate table coverage.
+
+An entire action table can be classified at once:
+
+```python
+paulis = projective_pauli_group(1)
+classification = table.classify(paulis)
+
+assert classification.label("H", "X_0") == "Z_0"
+assert classification.coverage == 1.0
+print(classification.as_rows(unknown="not Pauli"))
+```
+
+`ActionImageClassification` retains both the matching reference gates and the
+original table. It reports `recognized_count`, `coverage`, `all_recognized`, and
+the named coordinates of `unrecognized` cells. An unmatched entry is evidence
+only that it is absent from the chosen reference set—not that it lies outside a
+larger algebraic class.
 
 ## Finite group closure
 
@@ -69,6 +158,14 @@ Use `generate_conjugation_group` for one level,
 truncated, later computations can still be inspected, but `source_complete` and
 `complete` remain false. Thus a finite closure from incomplete input is never
 misreported as the full next group.
+
+The recommended workflow is therefore:
+
+1. Inspect `conjugation_action` for a single gate or
+   `conjugation_action_table` for a known finite source.
+2. Use `classify_paulis()` for direct Pauli recognition, or classify against a
+   different named projective reference set.
+3. Call bounded group generation only when closure is actually needed.
 
 ## Minimal example
 

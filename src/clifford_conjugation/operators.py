@@ -225,7 +225,7 @@ class GateSet(Sequence[Gate]):
 
         self._gates = tuple(retained)
         self._keys = tuple(retained_keys)
-        self._key_set = frozenset(key_set)
+        self._key_to_index = {key: index for index, key in enumerate(retained_keys)}
         self._dimension = dimension
         self._projective_config = projective_config
 
@@ -275,10 +275,20 @@ class GateSet(Sequence[Gate]):
     def contains_matrix(self, matrix: ArrayLike) -> bool:
         """Test projective membership using this set's numerical settings."""
 
+        return self.match_matrix(matrix) is not None
+
+    def match_matrix(self, matrix: ArrayLike) -> Gate | None:
+        """Return the retained projective representative, if one exists."""
+
         array = _as_square_matrix(matrix)
         if array.shape != (self.dimension, self.dimension):
-            return False
-        return projective_key(array, self.projective_config) in self._key_set
+            return None
+        try:
+            key = projective_key(array, self.projective_config)
+        except ValueError:
+            return None
+        index = self._key_to_index.get(key)
+        return None if index is None else self._gates[index]
 
 
 def _as_square_matrix(matrix: ArrayLike) -> ComplexMatrix:

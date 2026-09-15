@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .actions import ConjugationActionTable, conjugation_action_table
+from .actions import conjugate as conjugate
 from .groups import DEFAULT_SEARCH_LIMITS, GroupClosure, SearchLimits, generate_group
 from .operators import Gate, GateSet
 
@@ -23,10 +25,19 @@ class ConjugationGroup:
     defining_generators: GateSet
     closure: GroupClosure
     source_complete: bool
+    action_table: ConjugationActionTable | None = None
 
     def __post_init__(self) -> None:
         if self.level < 1:
             raise ValueError("conjugation-group level must be at least 1")
+        if self.action_table is not None:
+            if self.action_table.source_complete != self.source_complete:
+                raise ValueError("action-table and group source metadata must agree")
+            if (
+                self.action_table.unique_images.projective_keys
+                != self.defining_generators.projective_keys
+            ):
+                raise ValueError("action-table images must match the defining generators")
 
     @property
     def elements(self) -> GateSet:
@@ -45,19 +56,6 @@ class ConjugationGroup:
         """Return the proven full order, or ``None`` if either search was partial."""
 
         return len(self.elements) if self.complete else None
-
-
-def conjugate(conjugator: Gate, target: Gate, *, name: str | None = None) -> Gate:
-    """Return ``conjugator @ target @ conjugator†``."""
-
-    if conjugator.dimension != target.dimension:
-        raise ValueError("conjugator and target must have the same dimension")
-    label = name or f"{conjugator.name} {target.name} {conjugator.name}†"
-    return Gate(
-        label,
-        conjugator.matrix @ target.matrix @ conjugator.matrix.conj().T,
-        validation_atol=max(conjugator.validation_atol, target.validation_atol),
-    )
 
 
 def generate_conjugation_group(
@@ -84,37 +82,19 @@ def generate_conjugation_group(
 
     if level < 1:
         raise ValueError("conjugation-group level must be at least 1")
-    if not isinstance(source_complete, bool):
-        raise TypeError("source_complete must be a bool")
-    if isinstance(conjugators, Gate):
-        conjugator_set = GateSet(
-            [conjugators],
-            projective_config=probe_generators.projective_config,
-        )
-    elif isinstance(conjugators, GateSet):
-        conjugator_set = conjugators
-    else:
-        raise TypeError("conjugators must be a Gate or GateSet")
-    if conjugator_set.dimension != probe_generators.dimension:
-        raise ValueError("conjugators and probes must have the same dimension")
-    if conjugator_set.projective_config != probe_generators.projective_config:
-        raise ValueError("conjugators and probes must use the same projective settings")
-
-    generated = [
-        conjugate(conjugator, probe)
-        for conjugator in conjugator_set
-        for probe in probe_generators
-    ]
-    defining_generators = GateSet(
-        generated,
-        projective_config=probe_generators.projective_config,
+    action_table = conjugation_action_table(
+        conjugators,
+        probe_generators,
+        source_complete=source_complete,
     )
+    defining_generators = action_table.unique_images
     closure = generate_group(defining_generators, limits=limits)
     return ConjugationGroup(
         level=level,
         defining_generators=defining_generators,
         closure=closure,
         source_complete=source_complete,
+        action_table=action_table,
     )
 
 

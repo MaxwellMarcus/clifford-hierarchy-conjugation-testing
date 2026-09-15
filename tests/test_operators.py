@@ -73,7 +73,9 @@ def test_gate_set_eliminates_projective_duplicates() -> None:
 
     assert [gate.name for gate in gates] == ["I", "X"]
     assert gates.contains_matrix(-X)
+    assert gates.match_matrix(1j * X).name == "X"
     assert not gates.contains_matrix(np.eye(4))
+    assert gates.match_matrix(np.zeros((2, 2))) is None
 
 
 def test_gate_set_rejects_ambiguous_names_and_dimensions() -> None:

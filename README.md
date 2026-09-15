@@ -19,6 +19,13 @@ counterexample in Theorem 8.1 of de Silva and Lautsch,
 - A separate SymPy script that verifies that witness exactly.
 - Validated, immutable dense `Gate` objects and projectively deduplicated
   `GateSet` collections.
+- Standard dense `X_i, Z_i` generating sets with an explicit tensor-order
+  convention.
+- Generator-image actions and multi-conjugator action tables that can be
+  inspected without enumerating the generated group.
+- Projective recognition against named reference sets, including conventional
+  Pauli-word labels and explicit classification coverage. Action tables can be
+  recognized directly as Paulis without constructing a `4**n` dense catalog.
 - Bounded finite-group and iterated conjugation-group generation whose results
   distinguish proven closure from a truncated search.
 - Regression tests, continuous integration, packaging metadata, and citation
@@ -39,6 +46,7 @@ python -m pip install -e ".[dev]"
 verify-counterexample
 python -m pytest
 python examples/basic_conjugation_groups.py
+python examples/action_table.py
 ```
 
 To run the research scripts directly:
@@ -66,8 +74,10 @@ closure = generate_group(
 assert closure.complete and closure.order == 8
 ```
 
-See [the API guide](docs/api.md) for the precise conjugation convention,
-projective-equality policy, iteration methods, and incomplete-search semantics.
+See [the API guide](docs/api.md) for generator-image actions, the precise
+conjugation convention, projective-equality policy, iteration methods, and
+incomplete-search semantics. [Status and roadmap](docs/status-and-roadmap.md)
+separates the current guarantees from the next research-engineering steps.
 
 ## Expected exact result
 

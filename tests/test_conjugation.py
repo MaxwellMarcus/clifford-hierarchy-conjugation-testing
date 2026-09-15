@@ -34,6 +34,8 @@ def test_hadamard_conjugation_groups_stabilize_at_paulis() -> None:
     assert second.order == 4
     assert len(first.defining_generators) == 2
     assert first.elements.contains_matrix(X @ Z)
+    assert first.action_table is not None
+    assert first.action_table.shape == (1, 2)
 
 
 def test_next_level_propagates_incomplete_source() -> None:
@@ -55,6 +57,8 @@ def test_next_level_propagates_incomplete_source() -> None:
     assert not second.source_complete
     assert not second.complete
     assert second.order is None
+    assert second.action_table is not None
+    assert not second.action_table.source_complete
 
 
 def test_set_of_seed_conjugators_is_supported_and_deduplicated() -> None:
