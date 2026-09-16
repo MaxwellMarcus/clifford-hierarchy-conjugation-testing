@@ -28,6 +28,9 @@ def main() -> None:
     for action, labels in zip(table, classification.as_rows(unknown="not Pauli"), strict=True):
         for probe, label in zip(table.probe_generators, labels, strict=True):
             print(f"{action.conjugator.name} {probe.name} {action.conjugator.name}† = {label}")
+    print("deduplicated image provenance:")
+    for image, sources in zip(table.unique_images, table.unique_image_sources, strict=True):
+        print(f"  {image.name}: {', '.join(source.label for source in sources)}")
 
 
 if __name__ == "__main__":

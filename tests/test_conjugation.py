@@ -70,6 +70,23 @@ def test_set_of_seed_conjugators_is_supported_and_deduplicated() -> None:
     assert result.complete
     assert result.order == 4
     assert len(result.defining_generators) == 2
+    assert tuple(len(sources) for sources in result.defining_generator_sources) == (2, 2)
+
+
+def test_next_level_preserves_sources_from_incomplete_group() -> None:
+    probes = GateSet([Gate("X", X), Gate("Z", Z)])
+    theta = np.pi * np.sqrt(2)
+    first = generate_conjugation_group(
+        Gate("R", np.diag([1, np.exp(1j * theta)])),
+        probes,
+        limits=SearchLimits(max_elements=3, max_products=100),
+    )
+    second = generate_next_conjugation_group(first, probes)
+
+    assert not second.source_complete
+    assert second.action_table is not None
+    assert second.defining_generator_sources == second.action_table.unique_image_sources
+    assert all(second.defining_generator_sources)
 
 
 def test_conjugation_input_validation() -> None:

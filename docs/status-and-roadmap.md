@@ -18,6 +18,8 @@ Clifford-hierarchy decision procedure.
   symplectic form.
 - `generate_group` performs deterministic, bounded breadth-first projective
   closure and records generator words, stop reasons, and completeness.
+- Projectively deduplicated defining generators retain every source action-table
+  row and probe as stable, named provenance records.
 - Iterated conjugation groups retain their action tables and propagate an
   incomplete-source flag, so a later closure from truncated input is never
   reported as the full group.
@@ -25,7 +27,7 @@ Clifford-hierarchy decision procedure.
   numerical five-qubit group analysis, and exact SymPy confirmation of its
   displayed witness.
 - The public API, examples, packaging, citation metadata, CI, and regression
-  tests are in place. At this checkpoint, 58 tests pass with 94% statement
+  tests are in place. At this checkpoint, 60 tests pass with 94% statement
   coverage and Ruff reports no issues.
 
 ## What the current guarantees mean
@@ -46,8 +48,8 @@ Clifford-hierarchy decision procedure.
 
 - Carry recognized labels and provenance into conjugation-group levels and
   human-readable reports.
-- Record which source row and probe produced each deduplicated defining
-  generator, so witnesses remain interpretable after projective merging.
+- [x] Record every source row and probe for each deduplicated defining
+  generator, including groups generated from incomplete sources.
 
 ### P1: replace dense bottlenecks where structure is known
 
@@ -74,6 +76,6 @@ Clifford-hierarchy decision procedure.
 - Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next implementation target is P0 provenance: direct Pauli and
-symplectic recognition is now available, but deduplicated group generators do
-not yet retain every source row/probe that produced them.
+The immediate next implementation target is compact numerical witness export:
+generator words, classifications, provenance, tolerance, and completeness
+metadata should travel together for independent inspection.

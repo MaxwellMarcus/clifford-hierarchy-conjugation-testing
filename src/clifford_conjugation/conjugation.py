@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .actions import ConjugationActionTable, conjugation_action_table
+from .actions import ConjugationActionTable, GeneratorSource, conjugation_action_table
 from .actions import conjugate as conjugate
 from .groups import DEFAULT_SEARCH_LIMITS, GroupClosure, SearchLimits, generate_group
 from .operators import Gate, GateSet
@@ -26,10 +26,22 @@ class ConjugationGroup:
     closure: GroupClosure
     source_complete: bool
     action_table: ConjugationActionTable | None = None
+    defining_generator_sources: tuple[tuple[GeneratorSource, ...], ...] = ()
 
     def __post_init__(self) -> None:
         if self.level < 1:
             raise ValueError("conjugation-group level must be at least 1")
+        if not self.defining_generator_sources and self.action_table is not None:
+            object.__setattr__(
+                self,
+                "defining_generator_sources",
+                self.action_table.unique_image_sources,
+            )
+        if self.defining_generator_sources:
+            if len(self.defining_generator_sources) != len(self.defining_generators):
+                raise ValueError("every defining generator must have a provenance entry")
+            if any(not sources for sources in self.defining_generator_sources):
+                raise ValueError("defining-generator provenance must not be empty")
         if self.action_table is not None:
             if self.action_table.source_complete != self.source_complete:
                 raise ValueError("action-table and group source metadata must agree")
@@ -38,6 +50,8 @@ class ConjugationGroup:
                 != self.defining_generators.projective_keys
             ):
                 raise ValueError("action-table images must match the defining generators")
+            if self.action_table.unique_image_sources != self.defining_generator_sources:
+                raise ValueError("action-table and group provenance must agree")
 
     @property
     def elements(self) -> GateSet:
@@ -94,6 +108,7 @@ def generate_conjugation_group(
         defining_generators=defining_generators,
         closure=closure,
         source_complete=source_complete,
+        defining_generator_sources=action_table.unique_image_sources,
         action_table=action_table,
     )
 

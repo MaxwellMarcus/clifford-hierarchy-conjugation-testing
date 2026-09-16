@@ -71,6 +71,13 @@ def test_multi_conjugator_table_has_addressable_rows_and_cells() -> None:
     assert projectively_equal(table.image("I", "X").matrix, X)
     assert projectively_equal(table.image(1, 0).matrix, Z)
     assert len(table.unique_images) == 2
+    assert tuple(
+        tuple(source.label for source in sources)
+        for sources in table.unique_image_sources
+    ) == (
+        ("I conjugates X", "H conjugates Z"),
+        ("I conjugates Z", "H conjugates X"),
+    )
     assert table[:1] == (table[0],)
 
     with pytest.raises(KeyError, match="unknown conjugator"):
@@ -91,6 +98,27 @@ def test_table_records_incomplete_source_without_skipping_cells() -> None:
     assert table.shape == (1, 2)
     assert not table.source_complete
     assert len(table[0].images) == 2
+    assert tuple(source.label for sources in table.unique_image_sources for source in sources) == (
+        "H conjugates X",
+        "H conjugates Z",
+    )
+
+
+def test_provenance_retains_multiple_rows_for_duplicate_images() -> None:
+    conjugators = GateSet([Gate("I", IDENTITY), Gate("H", H), Gate("S", S)])
+    table = conjugation_action_table(conjugators, pauli_probes())
+
+    assert len(table.unique_images) == 3
+    assert tuple(len(sources) for sources in table.unique_image_sources) == (2, 3, 1)
+    assert tuple(source.label for source in table.unique_image_sources[1]) == (
+        "I conjugates Z",
+        "H conjugates X",
+        "S conjugates Z",
+    )
+    assert tuple(
+        (source.row_index, source.column_index)
+        for source in table.unique_image_sources[1]
+    ) == ((0, 1), (1, 0), (2, 1))
 
 
 def test_action_images_are_classified_with_projective_pauli_labels() -> None:

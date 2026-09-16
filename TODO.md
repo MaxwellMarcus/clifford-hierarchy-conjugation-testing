@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-15
+Last updated: 2026-09-16
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,20 +9,12 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Preserve provenance after projective generator deduplication.** A
-  deduplicated defining generator must retain every source action-table row and
-  probe that produced it, so later witnesses and reports remain interpretable.
-  Acceptance criteria:
-  - represent one-to-many provenance without changing projective equality;
-  - propagate provenance into generated conjugation-group results;
-  - expose stable, human-readable provenance in the public API;
-  - test duplicate images, multiple source rows, and incomplete source groups;
-  - update the API documentation and action-table example.
+- [ ] **Export a compact numerical witness.** Include generator words,
+  classifications, provenance, tolerance, and completeness metadata in a
+  stable machine-readable representation.
 
 ## Next
 
-- [ ] Export a compact numerical witness containing generator words,
-  classifications, provenance, tolerance, and completeness metadata.
 - [ ] Add an independent exact verifier for exported witnesses, generalized
   beyond the dedicated de Silva–Lautsch scripts.
 - [ ] Add adversarial tests near projective-canonicalization tolerance
@@ -42,6 +34,8 @@ coherent unit.
 
 ## Maintenance
 
+- [ ] Replace deprecated setuptools license-table/classifier metadata with an
+  SPDX license expression before the 2027-02-18 removal date.
 - [ ] Keep numerical and exact counterexample workflows passing.
 - [ ] Require the full test suite, Ruff, examples, counterexample verifiers,
   and package build before pushing an automated change.
@@ -51,6 +45,8 @@ coherent unit.
 
 ## Completed
 
+- [x] 2026-09-16 — Preserve every action-table row and probe after projective
+  generator deduplication and propagate the provenance into generated groups.
 - [x] 2026-09-15 — Add immutable dense `Gate` and projectively deduplicated
   `GateSet` structures.
 - [x] 2026-09-15 — Add bounded group closure with completeness and truncation

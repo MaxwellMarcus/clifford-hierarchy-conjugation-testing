@@ -13,10 +13,32 @@ from typing import TypeAlias, overload
 
 import numpy as np
 
-from .operators import Gate, GateSet, projectively_equal
+from .operators import Gate, GateSet, projective_key, projectively_equal
 from .paulis import PauliWord, recognize_pauli_word
 
 GeneratorReference: TypeAlias = str | int
+
+
+@dataclass(frozen=True)
+class GeneratorSource:
+    """One action-table coordinate that produced a defining generator."""
+
+    row_index: int
+    column_index: int
+    conjugator: str
+    probe: str
+
+    def __post_init__(self) -> None:
+        if self.row_index < 0 or self.column_index < 0:
+            raise ValueError("source indices must be nonnegative")
+        if not self.conjugator or not self.probe:
+            raise ValueError("source names must be nonempty")
+
+    @property
+    def label(self) -> str:
+        """Stable human-readable description of the source action."""
+
+        return f"{self.conjugator} conjugates {self.probe}"
 
 
 def conjugate(conjugator: Gate, target: Gate, *, name: str | None = None) -> Gate:
@@ -167,6 +189,25 @@ class ConjugationActionTable(Sequence[ConjugationAction]):
             (image for action in rows for image in action.images),
             projective_config=probe_generators.projective_config,
         )
+        sources_by_key = {
+            key: [] for key in self._unique_images.projective_keys
+        }
+        for row_index, action in enumerate(rows):
+            for column_index, (probe, image) in enumerate(
+                zip(probe_generators, action.images, strict=True)
+            ):
+                key = projective_key(image.matrix, probe_generators.projective_config)
+                sources_by_key[key].append(
+                    GeneratorSource(
+                        row_index=row_index,
+                        column_index=column_index,
+                        conjugator=action.conjugator.name,
+                        probe=probe.name,
+                    )
+                )
+        self._unique_image_sources = tuple(
+            tuple(sources_by_key[key]) for key in self._unique_images.projective_keys
+        )
 
     @overload
     def __getitem__(self, index: int) -> ConjugationAction: ...
@@ -214,6 +255,16 @@ class ConjugationActionTable(Sequence[ConjugationAction]):
         """All table cells, deduplicated modulo global phase."""
 
         return self._unique_images
+
+    @property
+    def unique_image_sources(self) -> tuple[tuple[GeneratorSource, ...], ...]:
+        """Every source coordinate for each projectively unique image.
+
+        The outer tuple follows ``unique_images`` order. Each inner tuple is in
+        stable row-major action-table order and is nonempty.
+        """
+
+        return self._unique_image_sources
 
     def row(self, conjugator: GeneratorReference) -> ConjugationAction:
         """Return an action row by zero-based index or conjugator name."""

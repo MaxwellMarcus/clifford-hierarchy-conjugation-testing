@@ -55,6 +55,14 @@ dense conjugation per table cell; it does not call `generate_group`.
 earlier search. `generate_conjugation_group` builds and retains this table as
 its `action_table` before attempting closure.
 
+Deduplication does not discard provenance. `unique_image_sources` is aligned
+with `unique_images`; every entry is a tuple of all `GeneratorSource` records
+that produced that projective image, in stable row-major order. Each record
+contains the source row and column indices, conjugator and probe names, and a
+human-readable `label` such as `H conjugates X_0`. Generated
+`ConjugationGroup` results expose the same mapping as
+`defining_generator_sources`, including when `source_complete` is false.
+
 ## Projective recognition and algebraic labels
 
 Every `GateSet` is also a named projective reference set.
