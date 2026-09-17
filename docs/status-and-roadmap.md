@@ -20,6 +20,9 @@ Clifford-hierarchy decision procedure.
   closure and records generator words, stop reasons, and completeness.
 - Projectively deduplicated defining generators retain every source action-table
   row and probe as stable, named provenance records.
+- Conjugation-group computations export a versioned JSON witness containing
+  generator words, Pauli classifications, provenance, numerical tolerance, and
+  explicit completeness metadata.
 - Iterated conjugation groups retain their action tables and propagate an
   incomplete-source flag, so a later closure from truncated input is never
   reported as the full group.
@@ -27,7 +30,7 @@ Clifford-hierarchy decision procedure.
   numerical five-qubit group analysis, and exact SymPy confirmation of its
   displayed witness.
 - The public API, examples, packaging, citation metadata, CI, and regression
-  tests are in place. At this checkpoint, 60 tests pass with 94% statement
+  tests are in place. At this checkpoint, 64 tests pass with 94% statement
   coverage and Ruff reports no issues.
 
 ## What the current guarantees mean
@@ -76,6 +79,5 @@ Clifford-hierarchy decision procedure.
 - Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next implementation target is compact numerical witness export:
-generator words, classifications, provenance, tolerance, and completeness
-metadata should travel together for independent inspection.
+The immediate next implementation target is an independent exact verifier for
+exported witnesses, generalized beyond the dedicated de Silva--Lautsch scripts.

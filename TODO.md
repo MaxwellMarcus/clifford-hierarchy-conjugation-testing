@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-16
+Last updated: 2026-09-17
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,14 +9,12 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Export a compact numerical witness.** Include generator words,
-  classifications, provenance, tolerance, and completeness metadata in a
-  stable machine-readable representation.
+- [ ] **Add an independent exact verifier for exported witnesses.** Define the
+  exact gate domain and verify the version-one witness schema without relying
+  on the dense numerical classifications.
 
 ## Next
 
-- [ ] Add an independent exact verifier for exported witnesses, generalized
-  beyond the dedicated de Silva–Lautsch scripts.
 - [ ] Add adversarial tests near projective-canonicalization tolerance
   boundaries and document failure modes.
 - [ ] Add reproducible benchmarks over qubit count, source size, group order,
@@ -45,6 +43,8 @@ coherent unit.
 
 ## Completed
 
+- [x] 2026-09-17 — Export a versioned compact numerical witness with generator
+  words, Pauli classifications, provenance, tolerance, and completeness data.
 - [x] 2026-09-16 — Preserve every action-table row and probe after projective
   generator deduplication and propagate the provenance into generated groups.
 - [x] 2026-09-15 — Add immutable dense `Gate` and projectively deduplicated

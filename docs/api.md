@@ -175,6 +175,25 @@ The recommended workflow is therefore:
    different named projective reference set.
 3. Call bounded group generation only when closure is actually needed.
 
+## Numerical witness export
+
+`build_numerical_witness(group)` returns a versioned, JSON-compatible record of
+a conjugation-group computation. `export_numerical_witness(group)` serializes
+the same record as deterministic JSON. The version-one schema includes closure
+generator words, direct tensor-Pauli classifications, all deduplicated-generator
+provenance, projective comparison settings, resource limits, and separate source
+and closure completeness flags.
+
+```python
+from clifford_conjugation import export_numerical_witness
+
+payload = export_numerical_witness(gamma_1)
+```
+
+The export is a compact numerical transcript for independent inspection. It
+does not upgrade floating-point recognition to an exact proof, and a truncated
+search always exports `null` for its group order.
+
 ## Minimal example
 
 ```python

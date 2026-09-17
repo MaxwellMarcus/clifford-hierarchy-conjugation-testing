@@ -42,6 +42,7 @@ from .standard_gates import (
     pauli_generators,
     projective_pauli_group,
 )
+from .witnesses import WITNESS_SCHEMA, build_numerical_witness, export_numerical_witness
 
 __all__ = [
     "DEFAULT_PROJECTIVE_CONFIG",
@@ -60,6 +61,8 @@ __all__ = [
     "ProjectiveConfig",
     "SearchLimits",
     "StopReason",
+    "WITNESS_SCHEMA",
+    "build_numerical_witness",
     "canonicalize_projective",
     "classify_action_images",
     "classify_pauli_images",
@@ -67,6 +70,7 @@ __all__ = [
     "conjugation_action",
     "conjugation_action_table",
     "embed_one_qubit_gate",
+    "export_numerical_witness",
     "generate_conjugation_group",
     "generate_conjugation_groups",
     "generate_group",
