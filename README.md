@@ -28,6 +28,8 @@ counterexample in Theorem 8.1 of de Silva and Lautsch,
   recognized directly as Paulis without constructing a `4**n` dense catalog.
 - Bounded finite-group and iterated conjugation-group generation whose results
   distinguish proven closure from a truncated search.
+- Independent exact verification of version-one tensor-Pauli witness exports
+  from caller-supplied binary action tables, including provenance and closure.
 - Regression tests, continuous integration, packaging metadata, and citation
   information.
 

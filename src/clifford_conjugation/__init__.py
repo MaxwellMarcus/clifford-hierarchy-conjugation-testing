@@ -19,6 +19,11 @@ from .conjugation import (
     generate_next_conjugation_group,
 )
 from .de_silva_lautsch import verify_counterexample
+from .exact_witnesses import (
+    ExactPauliAction,
+    ExactWitnessVerification,
+    verify_numerical_witness_exact,
+)
 from .groups import (
     DEFAULT_SEARCH_LIMITS,
     GroupClosure,
@@ -52,6 +57,8 @@ __all__ = [
     "ConjugationAction",
     "ConjugationActionTable",
     "ConjugationGroup",
+    "ExactPauliAction",
+    "ExactWitnessVerification",
     "Gate",
     "GateSet",
     "GeneratorSource",
@@ -81,5 +88,6 @@ __all__ = [
     "projectively_equal",
     "recognize_pauli_word",
     "verify_counterexample",
+    "verify_numerical_witness_exact",
 ]
 __version__ = "0.3.0"

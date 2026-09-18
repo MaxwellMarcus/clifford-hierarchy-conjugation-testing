@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-17
+Last updated: 2026-09-18
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,14 +9,12 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Add an independent exact verifier for exported witnesses.** Define the
-  exact gate domain and verify the version-one witness schema without relying
-  on the dense numerical classifications.
+- [ ] **Add adversarial tests near projective-canonicalization tolerance
+  boundaries.** Document where thresholding and decimal rounding can merge or
+  separate projective representatives.
 
 ## Next
 
-- [ ] Add adversarial tests near projective-canonicalization tolerance
-  boundaries and document failure modes.
 - [ ] Add reproducible benchmarks over qubit count, source size, group order,
   closure limit, runtime, and memory.
 - [ ] Avoid materializing dense action-table cells when the caller only needs
@@ -43,6 +41,9 @@ coherent unit.
 
 ## Completed
 
+- [x] 2026-09-18 — Add an independent exact binary-Pauli verifier for
+  version-one exports, including action classifications, provenance, and
+  claimed complete closures.
 - [x] 2026-09-17 — Export a versioned compact numerical witness with generator
   words, Pauli classifications, provenance, tolerance, and completeness data.
 - [x] 2026-09-16 — Preserve every action-table row and probe after projective

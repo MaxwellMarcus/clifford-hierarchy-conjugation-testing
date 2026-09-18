@@ -23,6 +23,9 @@ Clifford-hierarchy decision procedure.
 - Conjugation-group computations export a versioned JSON witness containing
   generator words, Pauli classifications, provenance, numerical tolerance, and
   explicit completeness metadata.
+- Version-one tensor-Pauli exports can be independently checked with exact
+  binary action tables; the verifier checks classifications, provenance, and
+  claimed complete Pauli closures without consulting dense matrices.
 - Iterated conjugation groups retain their action tables and propagate an
   incomplete-source flag, so a later closure from truncated input is never
   reported as the full group.
@@ -30,7 +33,7 @@ Clifford-hierarchy decision procedure.
   numerical five-qubit group analysis, and exact SymPy confirmation of its
   displayed witness.
 - The public API, examples, packaging, citation metadata, CI, and regression
-  tests are in place. At this checkpoint, 64 tests pass with 94% statement
+  tests are in place. At this checkpoint, 69 tests pass with 89% statement
   coverage and Ruff reports no issues.
 
 ## What the current guarantees mean
@@ -65,9 +68,10 @@ Clifford-hierarchy decision procedure.
 
 ### P1: expand exact verification
 
-- Generalize exact arithmetic beyond the dedicated counterexample scripts.
-- Allow numerical searches to export compact witnesses that an exact backend
-  can independently verify.
+- Generalize exact arithmetic beyond tensor-Pauli action tables and the
+  dedicated counterexample scripts.
+- [x] Allow numerical searches to export compact version-one witnesses that an
+  exact binary-Pauli backend can independently verify.
 - Add adversarial tolerance tests near projective-canonicalization boundaries.
 
 ### P2: interoperability and research workflow
@@ -79,5 +83,6 @@ Clifford-hierarchy decision procedure.
 - Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next implementation target is an independent exact verifier for
-exported witnesses, generalized beyond the dedicated de Silva--Lautsch scripts.
+The immediate next implementation target is adversarial testing around
+projective-canonicalization tolerance boundaries and their documented failure
+modes.

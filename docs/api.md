@@ -194,6 +194,26 @@ The export is a compact numerical transcript for independent inspection. It
 does not upgrade floating-point recognition to an exact proof, and a truncated
 search always exports `null` for its group order.
 
+Version-one exports whose action images are tensor Paulis can be checked with
+`verify_numerical_witness_exact`. Its exact gate domain is deliberately narrow:
+each conjugator is supplied independently as an `ExactPauliAction` mapping the
+exported probe names to binary tensor-Pauli words modulo scalar phase.
+
+```python
+from clifford_conjugation import ExactPauliAction, verify_numerical_witness_exact
+
+exact_h = ExactPauliAction.from_labels("H", 1, {"X": "Z_0", "Z": "X_0"})
+verification = verify_numerical_witness_exact(payload, {"H": exact_h})
+assert verification.valid and verification.closure_complete_verified
+```
+
+The verifier parses and checks the version-one schema, recomputes every
+classification from those exact actions, checks deduplicated-generator
+provenance, and independently enumerates a claimed complete closure using XOR
+arithmetic on Pauli masks. It never reads dense matrices or numerical
+tolerances. The supplied exact actions remain the trust boundary; this API does
+not derive an exact circuit description from a gate name.
+
 ## Minimal example
 
 ```python

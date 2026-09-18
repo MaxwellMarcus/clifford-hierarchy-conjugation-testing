@@ -6,12 +6,14 @@ import pytest
 
 from clifford_conjugation import (
     WITNESS_SCHEMA,
+    ExactPauliAction,
     Gate,
     GateSet,
     SearchLimits,
     build_numerical_witness,
     export_numerical_witness,
     generate_conjugation_group,
+    verify_numerical_witness_exact,
 )
 
 X = np.array([[0, 1], [1, 0]], dtype=complex)
@@ -99,3 +101,82 @@ def test_witness_requires_retained_action_metadata() -> None:
 
     with pytest.raises(ValueError, match="action-table metadata"):
         build_numerical_witness(group_without_table)
+
+
+def exact_hadamard_action() -> ExactPauliAction:
+    return ExactPauliAction.from_labels(
+        "H",
+        1,
+        {"X": "Z_0", "Z": "X_0"},
+    )
+
+
+def test_exact_verifier_checks_classifications_provenance_and_closure() -> None:
+    group = generate_conjugation_group(Gate("H", H), pauli_probes())
+    payload = export_numerical_witness(group)
+
+    verification = verify_numerical_witness_exact(
+        payload,
+        {"H": exact_hadamard_action()},
+    )
+
+    assert verification.valid
+    assert verification.classification_cells_verified == 2
+    assert verification.closure_elements_verified == 4
+    assert verification.closure_complete_verified
+    assert verification.errors == ()
+
+
+def test_exact_verifier_rejects_tampered_numerical_classification() -> None:
+    group = generate_conjugation_group(Gate("H", H), pauli_probes())
+    witness = build_numerical_witness(group)
+    witness["classification"]["rows"][0]["images"][0]["pauli"] = "X_0"
+
+    verification = verify_numerical_witness_exact(
+        witness,
+        {"H": exact_hadamard_action()},
+    )
+
+    assert not verification.valid
+    assert any("exact action gives 'Z_0'" in error for error in verification.errors)
+
+
+def test_exact_verifier_rejects_tampered_complete_closure() -> None:
+    group = generate_conjugation_group(Gate("H", H), pauli_probes())
+    witness = build_numerical_witness(group)
+    witness["closure"]["generator_words"].pop()
+    witness["closure"]["discovered_elements"] = 3
+    witness["closure"]["order"] = 3
+
+    verification = verify_numerical_witness_exact(
+        witness,
+        {"H": exact_hadamard_action()},
+    )
+
+    assert not verification.valid
+    assert not verification.closure_complete_verified
+    assert any("exact generated Pauli group" in error for error in verification.errors)
+
+
+def test_exact_verifier_rejects_tampered_generator_provenance() -> None:
+    group = generate_conjugation_group(Gate("H", H), pauli_probes())
+    witness = build_numerical_witness(group)
+    witness["defining_generators"][0]["sources"][0]["probe"] = "Z"
+
+    verification = verify_numerical_witness_exact(
+        witness,
+        {"H": exact_hadamard_action()},
+    )
+
+    assert not verification.valid
+    assert any("inconsistent source names" in error for error in verification.errors)
+
+
+def test_exact_verifier_rejects_wrong_schema() -> None:
+    verification = verify_numerical_witness_exact(
+        {"schema": "future-version", "num_qubits": 1},
+        {},
+    )
+
+    assert not verification.valid
+    assert verification.errors[0].startswith("schema must equal")
