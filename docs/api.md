@@ -23,6 +23,22 @@ small numerical searches reproducible, but approximate equality is not exact
 algebra. Use exact arithmetic to confirm proof-critical witnesses, as the
 counterexample example does.
 
+The two thresholds have deliberately literal boundary behavior:
+
+- pivot and component magnitudes equal to `atol` are treated as zero, while the
+  next representable value above `atol` is retained;
+- retained components are subsequently rounded to `decimals` places, so a
+  value larger than `atol` can still disappear;
+- rounding can merge distinct projective representatives on one side of a
+  decimal half-step and separate very close representatives across it;
+- crossing `atol` can change which entry fixes the global phase, causing a
+  discontinuous change in the key even for arbitrarily close matrices.
+
+Thus `projectively_equal` is equality of canonical numerical keys, not an
+`allclose`-style metric or a transitive mathematical tolerance relation. Keep a
+single `ProjectiveConfig` throughout one computation, inspect boundary-sensitive
+results under tighter settings, and use exact arithmetic for proof claims.
+
 ## Conjugation actions without closure
 
 Use `conjugation_action` when the immediate question is how a gate maps a

@@ -66,6 +66,53 @@ def test_projective_key_erases_signed_zero_after_rounding() -> None:
     assert projectively_equal(positive_zero, negative_zero, config)
 
 
+def test_pivot_selection_can_separate_nearby_unitaries_at_atol_boundary() -> None:
+    config = ProjectiveConfig(atol=1e-6, decimals=12)
+
+    def boundary_unitary(sine: float) -> np.ndarray:
+        cosine = np.sqrt(1.0 - sine**2)
+        return np.array([[1j * sine, cosine], [cosine, 1j * sine]])
+
+    at_boundary = boundary_unitary(config.atol)
+    above_boundary = boundary_unitary(np.nextafter(config.atol, np.inf))
+
+    assert np.allclose(at_boundary, above_boundary, atol=1e-20, rtol=0)
+    assert not projectively_equal(at_boundary, above_boundary, config)
+
+
+def test_component_threshold_merges_atol_but_separates_just_above() -> None:
+    config = ProjectiveConfig(atol=1e-3, decimals=5)
+    identity = np.eye(2, dtype=complex)
+
+    def phase_with_imaginary_part(imaginary: float) -> complex:
+        return np.sqrt(1.0 - imaginary**2) + 1j * imaginary
+
+    at_boundary = np.diag([1, phase_with_imaginary_part(config.atol)])
+    above_boundary = np.diag(
+        [1, phase_with_imaginary_part(np.nextafter(config.atol, np.inf))]
+    )
+
+    assert projectively_equal(identity, at_boundary, config)
+    assert not projectively_equal(identity, above_boundary, config)
+
+
+def test_decimal_rounding_can_merge_distinct_unitaries() -> None:
+    config = ProjectiveConfig(atol=1e-6, decimals=2)
+    positive_phase = np.diag([1, np.exp(0.004j)])
+    negative_phase = np.diag([1, np.exp(-0.004j)])
+
+    assert not np.allclose(positive_phase, negative_phase, atol=config.atol, rtol=0)
+    assert projectively_equal(positive_phase, negative_phase, config)
+
+
+def test_decimal_half_step_can_separate_nearby_unitaries() -> None:
+    config = ProjectiveConfig(atol=1e-6, decimals=2)
+    below_half_step = np.diag([1, np.exp(0.0049j)])
+    above_half_step = np.diag([1, np.exp(0.0051j)])
+
+    assert not projectively_equal(below_half_step, above_half_step, config)
+
+
 def test_gate_set_eliminates_projective_duplicates() -> None:
     gates = GateSet(
         [Gate("I", IDENTITY), Gate("phase-I", 1j * IDENTITY), Gate("X", X)]

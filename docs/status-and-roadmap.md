@@ -72,7 +72,9 @@ Clifford-hierarchy decision procedure.
   dedicated counterexample scripts.
 - [x] Allow numerical searches to export compact version-one witnesses that an
   exact binary-Pauli backend can independently verify.
-- Add adversarial tolerance tests near projective-canonicalization boundaries.
+- [x] Add adversarial tolerance tests near projective-canonicalization
+  boundaries, including pivot selection, component zeroing, and decimal
+  half-steps.
 
 ### P2: interoperability and research workflow
 
@@ -83,6 +85,6 @@ Clifford-hierarchy decision procedure.
 - Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next implementation target is adversarial testing around
-projective-canonicalization tolerance boundaries and their documented failure
-modes.
+The immediate next implementation target is reproducible group-search
+benchmarking that separates exact workload dimensions from host runtime and
+memory measurements.

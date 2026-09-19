@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-18
+Last updated: 2026-09-19
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,14 +9,12 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Add adversarial tests near projective-canonicalization tolerance
-  boundaries.** Document where thresholding and decimal rounding can merge or
-  separate projective representatives.
+- [ ] **Add reproducible benchmarks over qubit count, source size, group order,
+  closure limit, runtime, and memory.** Keep exact workload dimensions separate
+  from machine-dependent measurements.
 
 ## Next
 
-- [ ] Add reproducible benchmarks over qubit count, source size, group order,
-  closure limit, runtime, and memory.
 - [ ] Avoid materializing dense action-table cells when the caller only needs
   recognition or subgroup generators.
 - [ ] Add a symplectic/tableau backend for Pauli and Clifford operations while
@@ -41,6 +39,9 @@ coherent unit.
 
 ## Completed
 
+- [x] 2026-09-19 — Add adversarial unitary tests at projective pivot,
+  component-threshold, and decimal-rounding boundaries, and document how close
+  representatives can merge or separate.
 - [x] 2026-09-18 — Add an independent exact binary-Pauli verifier for
   version-one exports, including action classifications, provenance, and
   claimed complete closures.
