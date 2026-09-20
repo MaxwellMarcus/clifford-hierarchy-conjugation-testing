@@ -154,6 +154,20 @@ If the search terminates, closure under the generators proves that the finite
 set of unitaries is a group. The limits keep infinite or unexpectedly large
 groups from running without a bound.
 
+## Reproducible group-search benchmarks
+
+`run_conjugation_group_benchmark` measures the complete action-table and
+closure workflow. Its versioned record separates exact workload dimensions
+and search outcomes from host-dependent measurements. Exact fields include
+qubit count, source size, action-table cells, defining generators, closure
+limits, products tested, discovered elements, and maximum word length. Group
+order is present only when both source and closure are complete.
+
+Elapsed wall time and `tracemalloc` peak memory are descriptive measurements,
+not hardware-independent complexity claims; native NumPy allocations may not
+be fully represented by the Python memory counter. The benchmark refuses to
+nest inside an existing process-global `tracemalloc` session.
+
 ## Conjugation-group convention
 
 Let \(P\) be the supplied probe generating set (normally the single-qubit Pauli

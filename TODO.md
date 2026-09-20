@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-19
+Last updated: 2026-09-20
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,14 +9,12 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Add reproducible benchmarks over qubit count, source size, group order,
-  closure limit, runtime, and memory.** Keep exact workload dimensions separate
-  from machine-dependent measurements.
+- [ ] **Avoid materializing dense action-table cells when the caller only
+  needs recognition or subgroup generators.** Start with a streaming path and
+  cross-check it against retained action tables on small inputs.
 
 ## Next
 
-- [ ] Avoid materializing dense action-table cells when the caller only needs
-  recognition or subgroup generators.
 - [ ] Add a symplectic/tableau backend for Pauli and Clifford operations while
   retaining dense matrices for arbitrary gates.
 - [ ] Add optional Qiskit conversions with explicit endianness and qubit-order
@@ -39,6 +37,9 @@ coherent unit.
 
 ## Completed
 
+- [x] 2026-09-20 — Add versioned reproducible group-search benchmarks over
+  qubit count, source size, finite order, closure limits, runtime, and Python
+  peak memory, with exact workloads separated from host measurements.
 - [x] 2026-09-19 — Add adversarial unitary tests at projective pivot,
   component-threshold, and decimal-rounding boundaries, and document how close
   representatives can merge or separate.

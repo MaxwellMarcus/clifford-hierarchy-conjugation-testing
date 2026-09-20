@@ -1,0 +1,93 @@
+{
+  "baselines": [
+    {
+      "name": "one-qubit-hadamard",
+      "outcome": {
+        "closure_complete": true,
+        "complete": true,
+        "group_order": 4,
+        "source_complete": true,
+        "stop_reason": "complete"
+      },
+      "workload": {
+        "action_table_cells": 2,
+        "defining_generator_count": 2,
+        "discovered_elements": 4,
+        "max_elements": 64,
+        "max_products": 1000,
+        "max_word_length": 2,
+        "num_qubits": 1,
+        "probe_generator_count": 2,
+        "products_tested": 8,
+        "source_size": 1
+      }
+    },
+    {
+      "name": "one-qubit-two-sources",
+      "outcome": {
+        "closure_complete": true,
+        "complete": true,
+        "group_order": 4,
+        "source_complete": true,
+        "stop_reason": "complete"
+      },
+      "workload": {
+        "action_table_cells": 4,
+        "defining_generator_count": 2,
+        "discovered_elements": 4,
+        "max_elements": 64,
+        "max_products": 1000,
+        "max_word_length": 2,
+        "num_qubits": 1,
+        "probe_generator_count": 2,
+        "products_tested": 8,
+        "source_size": 2
+      }
+    },
+    {
+      "name": "two-qubit-identity",
+      "outcome": {
+        "closure_complete": true,
+        "complete": true,
+        "group_order": 16,
+        "source_complete": true,
+        "stop_reason": "complete"
+      },
+      "workload": {
+        "action_table_cells": 4,
+        "defining_generator_count": 4,
+        "discovered_elements": 16,
+        "max_elements": 128,
+        "max_products": 10000,
+        "max_word_length": 4,
+        "num_qubits": 2,
+        "probe_generator_count": 4,
+        "products_tested": 64,
+        "source_size": 1
+      }
+    },
+    {
+      "name": "one-qubit-limited-prefix",
+      "outcome": {
+        "closure_complete": false,
+        "complete": false,
+        "group_order": null,
+        "source_complete": true,
+        "stop_reason": "max_elements"
+      },
+      "workload": {
+        "action_table_cells": 2,
+        "defining_generator_count": 2,
+        "discovered_elements": 2,
+        "max_elements": 2,
+        "max_products": 1000,
+        "max_word_length": 1,
+        "num_qubits": 1,
+        "probe_generator_count": 2,
+        "products_tested": 2,
+        "source_size": 1
+      }
+    }
+  ],
+  "schema": "clifford-conjugation/group-search-workloads-v1"
+}

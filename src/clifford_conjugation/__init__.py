@@ -11,6 +11,16 @@ from .actions import (
     conjugation_action,
     conjugation_action_table,
 )
+from .benchmarking import (
+    GROUP_SEARCH_BENCHMARK_SCHEMA,
+    GroupSearchBenchmarkRecord,
+    GroupSearchBenchmarkRun,
+    GroupSearchMeasurements,
+    GroupSearchOutcome,
+    GroupSearchWorkload,
+    build_group_search_benchmark_record,
+    run_conjugation_group_benchmark,
+)
 from .conjugation import (
     ConjugationGroup,
     conjugate,
@@ -62,7 +72,13 @@ __all__ = [
     "Gate",
     "GateSet",
     "GeneratorSource",
+    "GROUP_SEARCH_BENCHMARK_SCHEMA",
     "GroupClosure",
+    "GroupSearchBenchmarkRecord",
+    "GroupSearchBenchmarkRun",
+    "GroupSearchMeasurements",
+    "GroupSearchOutcome",
+    "GroupSearchWorkload",
     "PauliActionClassification",
     "PauliWord",
     "ProjectiveConfig",
@@ -70,6 +86,7 @@ __all__ = [
     "StopReason",
     "WITNESS_SCHEMA",
     "build_numerical_witness",
+    "build_group_search_benchmark_record",
     "canonicalize_projective",
     "classify_action_images",
     "classify_pauli_images",
@@ -87,6 +104,7 @@ __all__ = [
     "projective_pauli_group",
     "projectively_equal",
     "recognize_pauli_word",
+    "run_conjugation_group_benchmark",
     "verify_counterexample",
     "verify_numerical_witness_exact",
 ]
