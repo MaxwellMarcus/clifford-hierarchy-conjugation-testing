@@ -29,6 +29,8 @@ Clifford-hierarchy decision procedure.
 - Group-search benchmarks record exact workload dimensions, closure limits,
   completeness-aware outcomes, runtime, and Python peak memory in a versioned
   schema; checked-in baselines cover one and two qubits and truncation.
+- Subgroup generation can stream action cells, retaining only projectively
+  unique dense generators and provenance instead of the full action table.
 - Iterated conjugation groups retain their action tables and propagate an
   incomplete-source flag, so a later closure from truncated input is never
   reported as the full group.
@@ -64,8 +66,10 @@ Clifford-hierarchy decision procedure.
 
 - Add a symplectic/tableau backend for Pauli and Clifford operations, while
   retaining dense matrices for arbitrary higher-hierarchy gates.
-- Avoid materializing every dense action-table cell when only recognition or a
-  generated subgroup is required.
+- [ ] Add a direct streamed recognition consumer that retains algebraic labels
+  and coordinates but no dense action-table cells.
+- [x] Avoid retaining dense action-table cells when only projectively unique
+  subgroup generators are required.
 - [x] Add reproducible benchmarks over qubit count, source size, group order,
   and truncation limits, separating exact workloads from host measurements.
 
@@ -88,5 +92,5 @@ Clifford-hierarchy decision procedure.
 - Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next implementation target is avoiding retained dense
-action-table cells when callers only need recognition or subgroup generators.
+The immediate next implementation target is direct streamed recognition that
+retains algebraic labels and coordinates but no dense action-table cells.

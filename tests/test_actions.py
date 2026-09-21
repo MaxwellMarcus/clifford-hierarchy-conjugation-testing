@@ -14,6 +14,7 @@ from clifford_conjugation import (
     pauli_generators,
     projective_pauli_group,
     projectively_equal,
+    stream_conjugation_generators,
 )
 
 IDENTITY = np.eye(2, dtype=complex)
@@ -119,6 +120,24 @@ def test_provenance_retains_multiple_rows_for_duplicate_images() -> None:
         (source.row_index, source.column_index)
         for source in table.unique_image_sources[1]
     ) == ((0, 1), (1, 0), (2, 1))
+
+
+def test_streamed_generators_match_retained_table_without_retaining_cells() -> None:
+    conjugators = GateSet([Gate("I", IDENTITY), Gate("H", H), Gate("S", S)])
+    probes = pauli_probes()
+    table = conjugation_action_table(conjugators, probes, source_complete=False)
+    streamed = stream_conjugation_generators(
+        conjugators,
+        probes,
+        source_complete=False,
+    )
+
+    assert streamed.shape == table.shape == (3, 2)
+    assert streamed.cells_processed == 6
+    assert not streamed.source_complete
+    assert streamed.unique_images.projective_keys == table.unique_images.projective_keys
+    assert streamed.unique_image_sources == table.unique_image_sources
+    assert len(streamed.unique_images) == 3
 
 
 def test_action_images_are_classified_with_projective_pauli_labels() -> None:
@@ -283,3 +302,7 @@ def test_table_rejects_wrong_row_and_source_metadata() -> None:
 def test_action_table_rejects_non_gate_collections() -> None:
     with pytest.raises(TypeError, match="Gate or GateSet"):
         conjugation_action_table([Gate("H", H)], pauli_probes())
+    with pytest.raises(TypeError, match="Gate or GateSet"):
+        stream_conjugation_generators([Gate("H", H)], pauli_probes())
+    with pytest.raises(TypeError, match="source_complete"):
+        stream_conjugation_generators(Gate("H", H), pauli_probes(), source_complete=1)

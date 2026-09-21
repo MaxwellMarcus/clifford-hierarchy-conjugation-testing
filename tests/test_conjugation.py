@@ -73,6 +73,27 @@ def test_set_of_seed_conjugators_is_supported_and_deduplicated() -> None:
     assert tuple(len(sources) for sources in result.defining_generator_sources) == (2, 2)
 
 
+def test_streamed_group_matches_retained_action_table() -> None:
+    probes = GateSet([Gate("X", X), Gate("Z", Z)])
+    seeds = GateSet([Gate("I", np.eye(2)), Gate("H", H)])
+    retained = generate_conjugation_group(seeds, probes)
+    streamed = generate_conjugation_group(
+        seeds,
+        probes,
+        retain_action_table=False,
+    )
+
+    assert retained.action_table is not None
+    assert streamed.action_table is None
+    assert streamed.defining_generators.projective_keys == (
+        retained.defining_generators.projective_keys
+    )
+    assert streamed.defining_generator_sources == retained.defining_generator_sources
+    assert streamed.closure.words == retained.closure.words
+    assert streamed.complete == retained.complete
+    assert streamed.order == retained.order
+
+
 def test_next_level_preserves_sources_from_incomplete_group() -> None:
     probes = GateSet([Gate("X", X), Gate("Z", Z)])
     theta = np.pi * np.sqrt(2)
@@ -99,6 +120,8 @@ def test_conjugation_input_validation() -> None:
         generate_conjugation_group(Gate.identity(2), probes)
     with pytest.raises(TypeError, match="source_complete"):
         generate_conjugation_group(Gate("X", X), probes, source_complete="yes")
+    with pytest.raises(TypeError, match="retain_action_table"):
+        generate_conjugation_group(Gate("X", X), probes, retain_action_table=1)
 
     other_config = GateSet(
         [Gate("X", X)],

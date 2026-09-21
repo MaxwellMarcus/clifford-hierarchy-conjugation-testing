@@ -4,7 +4,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .actions import ConjugationActionTable, GeneratorSource, conjugation_action_table
+from .actions import (
+    ConjugationActionTable,
+    GeneratorSource,
+    conjugation_action_table,
+    stream_conjugation_generators,
+)
 from .actions import conjugate as conjugate
 from .groups import DEFAULT_SEARCH_LIMITS, GroupClosure, SearchLimits, generate_group
 from .operators import Gate, GateSet
@@ -79,6 +84,7 @@ def generate_conjugation_group(
     level: int = 1,
     source_complete: bool = True,
     limits: SearchLimits = DEFAULT_SEARCH_LIMITS,
+    retain_action_table: bool = True,
 ) -> ConjugationGroup:
     r"""Generate one group from conjugated probe generators.
 
@@ -92,23 +98,38 @@ def generate_conjugation_group(
     modulo global phase.  Passing a single gate ``U`` therefore constructs the
     first level used in this repository.  ``source_complete`` should be false
     when ``S`` is only a truncated prefix of an earlier group.
+    ``retain_action_table=False`` streams cells into projectively unique
+    generators and provenance, leaving ``action_table`` unset in the result.
     """
 
     if level < 1:
         raise ValueError("conjugation-group level must be at least 1")
-    action_table = conjugation_action_table(
-        conjugators,
-        probe_generators,
-        source_complete=source_complete,
-    )
-    defining_generators = action_table.unique_images
+    if not isinstance(retain_action_table, bool):
+        raise TypeError("retain_action_table must be a bool")
+    if retain_action_table:
+        action_table = conjugation_action_table(
+            conjugators,
+            probe_generators,
+            source_complete=source_complete,
+        )
+        defining_generators = action_table.unique_images
+        defining_generator_sources = action_table.unique_image_sources
+    else:
+        streamed = stream_conjugation_generators(
+            conjugators,
+            probe_generators,
+            source_complete=source_complete,
+        )
+        action_table = None
+        defining_generators = streamed.unique_images
+        defining_generator_sources = streamed.unique_image_sources
     closure = generate_group(defining_generators, limits=limits)
     return ConjugationGroup(
         level=level,
         defining_generators=defining_generators,
         closure=closure,
         source_complete=source_complete,
-        defining_generator_sources=action_table.unique_image_sources,
+        defining_generator_sources=defining_generator_sources,
         action_table=action_table,
     )
 
@@ -118,6 +139,7 @@ def generate_next_conjugation_group(
     probe_generators: GateSet,
     *,
     limits: SearchLimits = DEFAULT_SEARCH_LIMITS,
+    retain_action_table: bool = True,
 ) -> ConjugationGroup:
     r"""Generate :math:`\Gamma_{j+1}` from discovered elements of ``previous``.
 
@@ -138,6 +160,7 @@ def generate_next_conjugation_group(
         level=previous.level + 1,
         source_complete=previous.complete,
         limits=limits,
+        retain_action_table=retain_action_table,
     )
 
 
@@ -147,20 +170,34 @@ def generate_conjugation_groups(
     *,
     depth: int,
     limits: SearchLimits = DEFAULT_SEARCH_LIMITS,
+    retain_action_tables: bool = True,
 ) -> tuple[ConjugationGroup, ...]:
     r"""Generate :math:`\Gamma_1,\ldots,\Gamma_{depth}` iteratively.
 
     The same explicit limits apply independently at every level.  Computation
     continues after truncation so users may inspect partial later levels, while
-    completeness metadata is propagated.
+    completeness metadata is propagated. ``retain_action_tables=False`` uses
+    streamed generator collection at every level.
     """
 
     if depth < 1:
         raise ValueError("depth must be at least 1")
-    first = generate_conjugation_group(seed, probe_generators, limits=limits)
+    if not isinstance(retain_action_tables, bool):
+        raise TypeError("retain_action_tables must be a bool")
+    first = generate_conjugation_group(
+        seed,
+        probe_generators,
+        limits=limits,
+        retain_action_table=retain_action_tables,
+    )
     groups = [first]
     for _ in range(1, depth):
         groups.append(
-            generate_next_conjugation_group(groups[-1], probe_generators, limits=limits)
+            generate_next_conjugation_group(
+                groups[-1],
+                probe_generators,
+                limits=limits,
+                retain_action_table=retain_action_tables,
+            )
         )
     return tuple(groups)

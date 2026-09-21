@@ -71,6 +71,27 @@ dense conjugation per table cell; it does not call `generate_group`.
 earlier search. `generate_conjugation_group` builds and retains this table as
 its `action_table` before attempting closure.
 
+When only projectively unique subgroup generators are needed, use the streamed
+path:
+
+```python
+streamed = stream_conjugation_generators(conjugators, pauli_generators(1))
+group = generate_conjugation_group(
+    conjugators,
+    pauli_generators(1),
+    retain_action_table=False,
+)
+assert group.action_table is None
+```
+
+`stream_conjugation_generators` computes cells in the same stable row-major
+order, deduplicates each one immediately, and retains only unique dense
+representatives plus `GeneratorSource` records. Its `unique_images` and
+`unique_image_sources` are cross-checked against the retained-table path in
+the test suite. Closure results are unchanged; callers opt out only of later
+cell-level inspection. The tower helper uses `retain_action_tables=False` to
+select this path at every level.
+
 Deduplication does not discard provenance. `unique_image_sources` is aligned
 with `unique_images`; every entry is a tuple of all `GeneratorSource` records
 that produced that projective image, in stable row-major order. Each record

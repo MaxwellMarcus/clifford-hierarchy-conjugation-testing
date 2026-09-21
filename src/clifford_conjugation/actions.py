@@ -13,7 +13,7 @@ from typing import TypeAlias, overload
 
 import numpy as np
 
-from .operators import Gate, GateSet, projective_key, projectively_equal
+from .operators import Gate, GateSet, ProjectiveKey, projective_key, projectively_equal
 from .paulis import PauliWord, recognize_pauli_word
 
 GeneratorReference: TypeAlias = str | int
@@ -39,6 +39,40 @@ class GeneratorSource:
         """Stable human-readable description of the source action."""
 
         return f"{self.conjugator} conjugates {self.probe}"
+
+
+@dataclass(frozen=True)
+class StreamedConjugationGenerators:
+    """Projectively unique action images collected without retaining a table.
+
+    Every dense cell is constructed once and immediately deduplicated. Only a
+    representative of each projective image and its lightweight provenance are
+    retained.
+    """
+
+    conjugators: GateSet
+    probe_generators: GateSet
+    unique_images: GateSet
+    unique_image_sources: tuple[tuple[GeneratorSource, ...], ...]
+    source_complete: bool
+    cells_processed: int
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.source_complete, bool):
+            raise TypeError("source_complete must be a bool")
+        expected_cells = len(self.conjugators) * len(self.probe_generators)
+        if self.cells_processed != expected_cells:
+            raise ValueError("cells_processed must match the source dimensions")
+        if len(self.unique_images) != len(self.unique_image_sources):
+            raise ValueError("every unique image must have a provenance entry")
+        if any(not sources for sources in self.unique_image_sources):
+            raise ValueError("unique-image provenance must not be empty")
+
+    @property
+    def shape(self) -> tuple[int, int]:
+        """Return the logical action-table shape without retaining its cells."""
+
+        return len(self.conjugators), len(self.probe_generators)
 
 
 def conjugate(conjugator: Gate, target: Gate, *, name: str | None = None) -> Gate:
@@ -565,6 +599,58 @@ def conjugation_action_table(
         probe_generators,
         (conjugation_action(conjugator, probe_generators) for conjugator in conjugator_set),
         source_complete=source_complete,
+    )
+
+
+def stream_conjugation_generators(
+    conjugators: Gate | GateSet,
+    probe_generators: GateSet,
+    *,
+    source_complete: bool = True,
+) -> StreamedConjugationGenerators:
+    """Deduplicate conjugated probes while retaining no dense action table.
+
+    This computes the same row-major cells and provenance as
+    :func:`conjugation_action_table`, but duplicate dense images become
+    unreachable as soon as their projective key and source record are saved.
+    """
+
+    if not isinstance(source_complete, bool):
+        raise TypeError("source_complete must be a bool")
+    conjugator_set = _coerce_conjugators(conjugators, probe_generators)
+    config = probe_generators.projective_config
+    unique_images: list[Gate] = []
+    sources_by_key: dict[ProjectiveKey, list[GeneratorSource]] = {}
+    key_order: list[ProjectiveKey] = []
+    cells_processed = 0
+    for row_index, conjugator in enumerate(conjugator_set):
+        for column_index, probe in enumerate(probe_generators):
+            image = conjugate(conjugator, probe)
+            key = projective_key(image.matrix, config)
+            if key not in sources_by_key:
+                unique_images.append(image)
+                sources_by_key[key] = []
+                key_order.append(key)
+            sources_by_key[key].append(
+                GeneratorSource(
+                    row_index=row_index,
+                    column_index=column_index,
+                    conjugator=conjugator.name,
+                    probe=probe.name,
+                )
+            )
+            cells_processed += 1
+
+    retained = GateSet(unique_images, projective_config=config)
+    if retained.projective_keys != tuple(key_order):
+        raise AssertionError("streamed projective keys changed during retention")
+    return StreamedConjugationGenerators(
+        conjugators=conjugator_set,
+        probe_generators=probe_generators,
+        unique_images=retained,
+        unique_image_sources=tuple(tuple(sources_by_key[key]) for key in key_order),
+        source_complete=source_complete,
+        cells_processed=cells_processed,
     )
 
 

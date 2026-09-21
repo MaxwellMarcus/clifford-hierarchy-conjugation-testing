@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-20
+Last updated: 2026-09-21
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,9 +9,9 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Avoid materializing dense action-table cells when the caller only
-  needs recognition or subgroup generators.** Start with a streaming path and
-  cross-check it against retained action tables on small inputs.
+- [ ] **Add direct streamed action-image recognition.** Retain algebraic labels
+  and coordinates without dense cells, and cross-check reference and Pauli
+  recognition against retained action tables.
 
 ## Next
 
@@ -37,6 +37,9 @@ coherent unit.
 
 ## Completed
 
+- [x] 2026-09-21 — Add an opt-in streamed subgroup-generator path that retains
+  only projectively unique dense images and provenance, cross-checked against
+  retained action tables and closure results.
 - [x] 2026-09-20 — Add versioned reproducible group-search benchmarks over
   qubit count, source size, finite order, closure limits, runtime, and Python
   peak memory, with exact workloads separated from host measurements.
