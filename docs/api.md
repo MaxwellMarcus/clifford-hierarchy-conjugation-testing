@@ -128,6 +128,22 @@ a complete Pauli generating set, `preserves_paulis` is the usual normalizer
 test that every represented conjugator is Clifford. For an arbitrary subset of
 probes, it means only that the supplied probes have Pauli images.
 
+When cell matrices are not needed after recognition, stream the classification
+directly:
+
+```python
+labels = stream_classify_action_images(conjugators, probes, references)
+pauli_words = stream_classify_pauli_images(conjugators, pauli_generators(1))
+assert pauli_words.label("H", "X_0") == "Z_0"
+```
+
+Both consumers construct one conjugated probe at a time and discard its dense
+matrix immediately. The reference consumer retains only names; the Pauli
+consumer retains `PauliWord` X/Z masks and labels. Each result preserves the
+logical row/column shape, source completeness, coverage, and lightweight
+`GeneratorSource` coordinates for unrecognized cells. Regression tests compare
+both streamed paths with classifications from a fully retained action table.
+
 For a table whose probes are the standard `pauli_generators(n)` in X-then-Z
 order, `classification.symplectic_matrix(conjugator)` returns the induced
 read-only binary matrix. It verifies the symplectic identity before returning.

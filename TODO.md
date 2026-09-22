@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-21
+Last updated: 2026-09-22
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,14 +9,12 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Add direct streamed action-image recognition.** Retain algebraic labels
-  and coordinates without dense cells, and cross-check reference and Pauli
-  recognition against retained action tables.
+- [ ] **Add a symplectic/tableau backend for Pauli and Clifford operations.**
+  Retain dense matrices for arbitrary gates and cross-check both paths on
+  low-qubit action and closure examples.
 
 ## Next
 
-- [ ] Add a symplectic/tableau backend for Pauli and Clifford operations while
-  retaining dense matrices for arbitrary gates.
 - [ ] Add optional Qiskit conversions with explicit endianness and qubit-order
   tests.
 - [ ] Add a CLI for action tables, classifications, closure metadata, and JSON
@@ -37,6 +35,10 @@ coherent unit.
 
 ## Completed
 
+- [x] 2026-09-22 — Add direct streamed named-reference and tensor-Pauli
+  recognition that retains algebraic labels, binary coordinates, and source
+  coordinates without dense action-table cells, cross-checked against retained
+  tables.
 - [x] 2026-09-21 — Add an opt-in streamed subgroup-generator path that retains
   only projectively unique dense images and provenance, cross-checked against
   retained action tables and closure results.

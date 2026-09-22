@@ -14,6 +14,8 @@ from clifford_conjugation import (
     pauli_generators,
     projective_pauli_group,
     projectively_equal,
+    stream_classify_action_images,
+    stream_classify_pauli_images,
     stream_conjugation_generators,
 )
 
@@ -138,6 +140,63 @@ def test_streamed_generators_match_retained_table_without_retaining_cells() -> N
     assert streamed.unique_images.projective_keys == table.unique_images.projective_keys
     assert streamed.unique_image_sources == table.unique_image_sources
     assert len(streamed.unique_images) == 3
+
+
+def test_streamed_reference_recognition_matches_retained_table() -> None:
+    conjugators = GateSet([Gate("I", IDENTITY), Gate("H", H), Gate("S", S)])
+    probes = pauli_probes()
+    references = projective_pauli_group(1)
+    retained = conjugation_action_table(
+        conjugators,
+        probes,
+        source_complete=False,
+    ).classify(references)
+    streamed = stream_classify_action_images(
+        conjugators,
+        probes,
+        references,
+        source_complete=False,
+    )
+
+    assert streamed.shape == (3, 2)
+    assert streamed.cells_processed == 6
+    assert not streamed.source_complete
+    assert streamed.as_rows() == retained.as_rows()
+    assert streamed.recognized_count == retained.recognized_count
+    assert streamed.all_recognized
+    assert streamed.match("S", "X") == "Y_0"
+    assert streamed.unrecognized == ()
+
+
+def test_streamed_pauli_recognition_retains_words_and_unknown_coordinates() -> None:
+    t_gate = Gate("T", np.diag([1, np.exp(1j * np.pi / 4)]))
+    conjugators = GateSet([Gate("H", H), t_gate])
+    probes = pauli_probes()
+    retained = conjugation_action_table(conjugators, probes).classify_paulis()
+    streamed = stream_classify_pauli_images(conjugators, probes)
+
+    assert streamed.as_rows(unknown="not Pauli") == retained.as_rows(
+        unknown="not Pauli"
+    )
+    assert not streamed.preserves_paulis
+    assert streamed.coverage == retained.coverage == 0.75
+    assert streamed.match("H", "X") == retained.match("H", "X")
+    assert streamed.match("H", "X").x_mask == 0
+    assert streamed.match("H", "X").z_mask == 1
+    assert tuple(source.label for source in streamed.unrecognized) == (
+        "T conjugates X",
+    )
+
+
+def test_streamed_recognition_validates_metadata_and_reference_settings() -> None:
+    probes = pauli_probes()
+    other_config = ProjectiveConfig(decimals=8)
+    references = projective_pauli_group(1, projective_config=other_config)
+
+    with pytest.raises(ValueError, match="projective settings"):
+        stream_classify_action_images(Gate("H", H), probes, references)
+    with pytest.raises(TypeError, match="source_complete"):
+        stream_classify_pauli_images(Gate("H", H), probes, source_complete=1)
 
 
 def test_action_images_are_classified_with_projective_pauli_labels() -> None:

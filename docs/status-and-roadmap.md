@@ -31,6 +31,8 @@ Clifford-hierarchy decision procedure.
   schema; checked-in baselines cover one and two qubits and truncation.
 - Subgroup generation can stream action cells, retaining only projectively
   unique dense generators and provenance instead of the full action table.
+- Named-reference and tensor-Pauli recognition can stream action cells while
+  retaining only labels, binary Pauli coordinates, and source coordinates.
 - Iterated conjugation groups retain their action tables and propagate an
   incomplete-source flag, so a later closure from truncated input is never
   reported as the full group.
@@ -38,7 +40,7 @@ Clifford-hierarchy decision procedure.
   numerical five-qubit group analysis, and exact SymPy confirmation of its
   displayed witness.
 - The public API, examples, packaging, citation metadata, CI, and regression
-  tests are in place. At this checkpoint, 81 tests pass with 90% statement
+  tests are in place. At this checkpoint, 86 tests pass with 90% statement
   coverage and Ruff reports no issues.
 
 ## What the current guarantees mean
@@ -66,8 +68,8 @@ Clifford-hierarchy decision procedure.
 
 - Add a symplectic/tableau backend for Pauli and Clifford operations, while
   retaining dense matrices for arbitrary higher-hierarchy gates.
-- [ ] Add a direct streamed recognition consumer that retains algebraic labels
-  and coordinates but no dense action-table cells.
+- [x] Add direct streamed recognition consumers that retain algebraic labels,
+  binary Pauli coordinates, and source coordinates but no dense action cells.
 - [x] Avoid retaining dense action-table cells when only projectively unique
   subgroup generators are required.
 - [x] Add reproducible benchmarks over qubit count, source size, group order,
@@ -92,5 +94,5 @@ Clifford-hierarchy decision procedure.
 - Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next implementation target is direct streamed recognition that
-retains algebraic labels and coordinates but no dense action-table cells.
+The immediate next implementation target is a symplectic/tableau backend for
+Pauli and Clifford operations, cross-checked against the dense implementation.

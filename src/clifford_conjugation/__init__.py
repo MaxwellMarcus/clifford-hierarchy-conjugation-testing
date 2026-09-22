@@ -6,11 +6,15 @@ from .actions import (
     ConjugationActionTable,
     GeneratorSource,
     PauliActionClassification,
+    StreamedActionImageClassification,
     StreamedConjugationGenerators,
+    StreamedPauliActionClassification,
     classify_action_images,
     classify_pauli_images,
     conjugation_action,
     conjugation_action_table,
+    stream_classify_action_images,
+    stream_classify_pauli_images,
     stream_conjugation_generators,
 )
 from .benchmarking import (
@@ -86,6 +90,8 @@ __all__ = [
     "ProjectiveConfig",
     "SearchLimits",
     "StreamedConjugationGenerators",
+    "StreamedActionImageClassification",
+    "StreamedPauliActionClassification",
     "StopReason",
     "WITNESS_SCHEMA",
     "build_numerical_witness",
@@ -109,6 +115,8 @@ __all__ = [
     "recognize_pauli_word",
     "run_conjugation_group_benchmark",
     "stream_conjugation_generators",
+    "stream_classify_action_images",
+    "stream_classify_pauli_images",
     "verify_counterexample",
     "verify_numerical_witness_exact",
 ]

@@ -75,6 +75,184 @@ class StreamedConjugationGenerators:
         return len(self.conjugators), len(self.probe_generators)
 
 
+@dataclass(frozen=True)
+class StreamedActionImageClassification:
+    """Named reference matches retained without dense action-table cells."""
+
+    conjugators: GateSet
+    probe_generators: GateSet
+    matches: tuple[tuple[str | None, ...], ...]
+    source_complete: bool
+    cells_processed: int
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.source_complete, bool):
+            raise TypeError("source_complete must be a bool")
+        if len(self.matches) != len(self.conjugators) or any(
+            len(row) != len(self.probe_generators) for row in self.matches
+        ):
+            raise ValueError("classification shape must match the source dimensions")
+        if self.cells_processed != len(self.conjugators) * len(self.probe_generators):
+            raise ValueError("cells_processed must match the source dimensions")
+
+    @property
+    def shape(self) -> tuple[int, int]:
+        """Return the logical action-table shape."""
+
+        return len(self.conjugators), len(self.probe_generators)
+
+    @property
+    def recognized_count(self) -> int:
+        """Number of cells matched to a named reference."""
+
+        return sum(match is not None for row in self.matches for match in row)
+
+    @property
+    def total_count(self) -> int:
+        """Number of cells classified."""
+
+        return self.cells_processed
+
+    @property
+    def coverage(self) -> float:
+        """Fraction of cells matched to a named reference."""
+
+        return self.recognized_count / self.total_count
+
+    @property
+    def all_recognized(self) -> bool:
+        """Whether every streamed image matched a named reference."""
+
+        return self.recognized_count == self.total_count
+
+    @property
+    def unrecognized(self) -> tuple[GeneratorSource, ...]:
+        """Return lightweight coordinates for unmatched cells."""
+
+        return _unrecognized_sources(
+            self.conjugators,
+            self.probe_generators,
+            self.matches,
+        )
+
+    def match(
+        self,
+        conjugator: GeneratorReference,
+        probe: GeneratorReference,
+    ) -> str | None:
+        """Return a matched reference name at one logical table coordinate."""
+
+        row = _named_index(self.conjugators, conjugator, "conjugator")
+        column = _named_index(self.probe_generators, probe, "probe")
+        return self.matches[row][column]
+
+    def as_rows(self, *, unknown: str | None = None) -> tuple[tuple[str | None, ...], ...]:
+        """Return the retained rectangular table of algebraic labels."""
+
+        return tuple(
+            tuple(unknown if match is None else match for match in row)
+            for row in self.matches
+        )
+
+
+@dataclass(frozen=True)
+class StreamedPauliActionClassification:
+    """Tensor-Pauli matches retained without dense action-table cells."""
+
+    conjugators: GateSet
+    probe_generators: GateSet
+    matches: tuple[tuple[PauliWord | None, ...], ...]
+    source_complete: bool
+    cells_processed: int
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.source_complete, bool):
+            raise TypeError("source_complete must be a bool")
+        if len(self.matches) != len(self.conjugators) or any(
+            len(row) != len(self.probe_generators) for row in self.matches
+        ):
+            raise ValueError("classification shape must match the source dimensions")
+        if self.cells_processed != len(self.conjugators) * len(self.probe_generators):
+            raise ValueError("cells_processed must match the source dimensions")
+
+    @property
+    def shape(self) -> tuple[int, int]:
+        """Return the logical action-table shape."""
+
+        return len(self.conjugators), len(self.probe_generators)
+
+    @property
+    def recognized_count(self) -> int:
+        """Number of cells recognized as projective tensor Paulis."""
+
+        return sum(match is not None for row in self.matches for match in row)
+
+    @property
+    def total_count(self) -> int:
+        """Number of cells classified."""
+
+        return self.cells_processed
+
+    @property
+    def coverage(self) -> float:
+        """Fraction of cells recognized as tensor Paulis."""
+
+        return self.recognized_count / self.total_count
+
+    @property
+    def all_recognized(self) -> bool:
+        """Whether every streamed image is a projective tensor Pauli."""
+
+        return self.recognized_count == self.total_count
+
+    @property
+    def preserves_paulis(self) -> bool:
+        """Whether all supplied probe images were recognized as Paulis."""
+
+        return self.all_recognized
+
+    @property
+    def unrecognized(self) -> tuple[GeneratorSource, ...]:
+        """Return lightweight coordinates for non-Pauli cells."""
+
+        return _unrecognized_sources(
+            self.conjugators,
+            self.probe_generators,
+            self.matches,
+        )
+
+    def match(
+        self,
+        conjugator: GeneratorReference,
+        probe: GeneratorReference,
+    ) -> PauliWord | None:
+        """Return a binary Pauli word at one logical table coordinate."""
+
+        row = _named_index(self.conjugators, conjugator, "conjugator")
+        column = _named_index(self.probe_generators, probe, "probe")
+        return self.matches[row][column]
+
+    def label(
+        self,
+        conjugator: GeneratorReference,
+        probe: GeneratorReference,
+        *,
+        unknown: str | None = None,
+    ) -> str | None:
+        """Return a conventional Pauli label at one logical coordinate."""
+
+        match = self.match(conjugator, probe)
+        return unknown if match is None else match.label
+
+    def as_rows(self, *, unknown: str | None = None) -> tuple[tuple[str | None, ...], ...]:
+        """Return a rectangular table of conventional Pauli labels."""
+
+        return tuple(
+            tuple(unknown if match is None else match.label for match in row)
+            for row in self.matches
+        )
+
+
 def conjugate(conjugator: Gate, target: Gate, *, name: str | None = None) -> Gate:
     """Return ``conjugator @ target @ conjugator†``."""
 
@@ -654,6 +832,80 @@ def stream_conjugation_generators(
     )
 
 
+def stream_classify_action_images(
+    conjugators: Gate | GateSet,
+    probe_generators: GateSet,
+    reference_gates: GateSet,
+    *,
+    source_complete: bool = True,
+) -> StreamedActionImageClassification:
+    """Recognize images against named references without retaining dense cells.
+
+    Each conjugated probe is constructed once, reduced immediately to a
+    reference name or ``None``, and then allowed to go out of scope. The
+    retained rows therefore contain only algebraic labels in stable source
+    coordinates.
+    """
+
+    if not isinstance(source_complete, bool):
+        raise TypeError("source_complete must be a bool")
+    conjugator_set = _coerce_conjugators(conjugators, probe_generators)
+    if probe_generators.dimension != reference_gates.dimension:
+        raise ValueError("action images and references must have the same dimension")
+    if probe_generators.projective_config != reference_gates.projective_config:
+        raise ValueError("action images and references must use the same projective settings")
+
+    rows: list[tuple[str | None, ...]] = []
+    for conjugator in conjugator_set:
+        matches: list[str | None] = []
+        for probe in probe_generators:
+            image = conjugate(conjugator, probe)
+            match = reference_gates.match_matrix(image.matrix)
+            matches.append(None if match is None else match.name)
+        rows.append(tuple(matches))
+    return StreamedActionImageClassification(
+        conjugators=conjugator_set,
+        probe_generators=probe_generators,
+        matches=tuple(rows),
+        source_complete=source_complete,
+        cells_processed=len(conjugator_set) * len(probe_generators),
+    )
+
+
+def stream_classify_pauli_images(
+    conjugators: Gate | GateSet,
+    probe_generators: GateSet,
+    *,
+    source_complete: bool = True,
+) -> StreamedPauliActionClassification:
+    """Recognize tensor-Pauli images without retaining dense action cells.
+
+    The returned :class:`PauliWord` values retain binary X/Z coordinates and
+    conventional labels. Dense conjugated probes are discarded after each
+    recognition step.
+    """
+
+    if not isinstance(source_complete, bool):
+        raise TypeError("source_complete must be a bool")
+    conjugator_set = _coerce_conjugators(conjugators, probe_generators)
+    config = probe_generators.projective_config
+    rows: list[tuple[PauliWord | None, ...]] = []
+    for conjugator in conjugator_set:
+        rows.append(
+            tuple(
+                recognize_pauli_word(conjugate(conjugator, probe).matrix, config)
+                for probe in probe_generators
+            )
+        )
+    return StreamedPauliActionClassification(
+        conjugators=conjugator_set,
+        probe_generators=probe_generators,
+        matches=tuple(rows),
+        source_complete=source_complete,
+        cells_processed=len(conjugator_set) * len(probe_generators),
+    )
+
+
 def classify_action_images(
     action_table: ConjugationActionTable,
     reference_gates: GateSet,
@@ -707,6 +959,28 @@ def _named_index(gates: GateSet, reference: GeneratorReference, kind: str) -> in
                 return index
         raise KeyError(f"unknown {kind} name {reference!r}")
     raise TypeError(f"{kind} reference must be a name or integer index")
+
+
+def _unrecognized_sources(
+    conjugators: GateSet,
+    probes: GateSet,
+    matches: tuple[tuple[object | None, ...], ...],
+) -> tuple[GeneratorSource, ...]:
+    return tuple(
+        GeneratorSource(
+            row_index=row_index,
+            column_index=column_index,
+            conjugator=conjugator.name,
+            probe=probe.name,
+        )
+        for row_index, (conjugator, row) in enumerate(
+            zip(conjugators, matches, strict=True)
+        )
+        for column_index, (probe, match) in enumerate(
+            zip(probes, row, strict=True)
+        )
+        if match is None
+    )
 
 
 def _gate_set_signature(gates: GateSet) -> tuple[tuple[str, object], ...]:
