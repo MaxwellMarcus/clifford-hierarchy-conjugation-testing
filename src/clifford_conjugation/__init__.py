@@ -63,6 +63,15 @@ from .standard_gates import (
     pauli_generators,
     projective_pauli_group,
 )
+from .tableaus import (
+    SymplecticTableau,
+    TableauClosure,
+    cnot_tableau,
+    generate_tableau_group,
+    hadamard_tableau,
+    phase_tableau,
+    tableau_from_dense_clifford,
+)
 from .witnesses import WITNESS_SCHEMA, build_numerical_witness, export_numerical_witness
 
 __all__ = [
@@ -93,12 +102,15 @@ __all__ = [
     "StreamedActionImageClassification",
     "StreamedPauliActionClassification",
     "StopReason",
+    "SymplecticTableau",
+    "TableauClosure",
     "WITNESS_SCHEMA",
     "build_numerical_witness",
     "build_group_search_benchmark_record",
     "canonicalize_projective",
     "classify_action_images",
     "classify_pauli_images",
+    "cnot_tableau",
     "conjugate",
     "conjugation_action",
     "conjugation_action_table",
@@ -108,7 +120,10 @@ __all__ = [
     "generate_conjugation_groups",
     "generate_group",
     "generate_next_conjugation_group",
+    "generate_tableau_group",
+    "hadamard_tableau",
     "pauli_generators",
+    "phase_tableau",
     "projective_key",
     "projective_pauli_group",
     "projectively_equal",
@@ -117,6 +132,7 @@ __all__ = [
     "stream_conjugation_generators",
     "stream_classify_action_images",
     "stream_classify_pauli_images",
+    "tableau_from_dense_clifford",
     "verify_counterexample",
     "verify_numerical_witness_exact",
 ]

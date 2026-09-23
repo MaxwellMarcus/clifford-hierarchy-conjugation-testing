@@ -53,6 +53,30 @@ class PauliWord:
     def __str__(self) -> str:
         return self.label
 
+    def multiply(self, other: PauliWord) -> PauliWord:
+        """Multiply projective Pauli words, intentionally discarding phase."""
+
+        if not isinstance(other, PauliWord):
+            raise TypeError("other must be a PauliWord")
+        if self.num_qubits != other.num_qubits:
+            raise ValueError("Pauli words must have the same qubit count")
+        return PauliWord(
+            self.num_qubits,
+            self.x_mask ^ other.x_mask,
+            self.z_mask ^ other.z_mask,
+        )
+
+    def commutes_with(self, other: PauliWord) -> bool:
+        """Return whether two Pauli representatives commute."""
+
+        if not isinstance(other, PauliWord):
+            raise TypeError("other must be a PauliWord")
+        if self.num_qubits != other.num_qubits:
+            raise ValueError("Pauli words must have the same qubit count")
+        pairing = (self.x_mask & other.z_mask).bit_count()
+        pairing += (self.z_mask & other.x_mask).bit_count()
+        return pairing % 2 == 0
+
 
 def recognize_pauli_word(
     matrix: ArrayLike,

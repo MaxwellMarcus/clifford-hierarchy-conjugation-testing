@@ -13,6 +13,10 @@ Clifford-hierarchy decision procedure.
 - Action images can be matched against any named `GateSet`. Tensor Paulis can
   also be recognized directly as binary `PauliWord` objects without building a
   `4**n` dense reference catalog.
+- Projective Pauli multiplication, commutation, and Clifford actions can be
+  performed exactly with binary symplectic tableaus. Bounded tableau closure
+  preserves explicit incomplete states and represents actions modulo Pauli
+  signs and Clifford phases, not full signed stabilizer tableaus.
 - For standard Pauli probes, direct classifications expose the induced binary
   symplectic matrix for each recognized row and verify preservation of the
   symplectic form.
@@ -66,8 +70,10 @@ Clifford-hierarchy decision procedure.
 
 ### P1: replace dense bottlenecks where structure is known
 
-- Add a symplectic/tableau backend for Pauli and Clifford operations, while
-  retaining dense matrices for arbitrary higher-hierarchy gates.
+- [x] Add a phase-free symplectic/tableau backend for exact Pauli and Clifford
+  actions and bounded closures, cross-checked against dense low-qubit results.
+- Retain dense matrices for arbitrary higher-hierarchy gates and signed phase
+  information not represented by the phase-free tableau backend.
 - [x] Add direct streamed recognition consumers that retain algebraic labels,
   binary Pauli coordinates, and source coordinates but no dense action cells.
 - [x] Avoid retaining dense action-table cells when only projectively unique
@@ -94,5 +100,5 @@ Clifford-hierarchy decision procedure.
 - Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next implementation target is a symplectic/tableau backend for
-Pauli and Clifford operations, cross-checked against the dense implementation.
+The immediate next implementation target is optional Qiskit conversion with
+explicit endianness and qubit-order round-trip tests.

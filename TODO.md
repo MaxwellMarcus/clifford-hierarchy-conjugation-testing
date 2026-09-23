@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-22
+Last updated: 2026-09-23
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,14 +9,12 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Add a symplectic/tableau backend for Pauli and Clifford operations.**
-  Retain dense matrices for arbitrary gates and cross-check both paths on
-  low-qubit action and closure examples.
+- [ ] **Add optional Qiskit conversions with explicit ordering tests.**
+  Convert operators and circuits without making Qiskit a core dependency, and
+  pin the qubit-zero-most-significant convention in round-trip tests.
 
 ## Next
 
-- [ ] Add optional Qiskit conversions with explicit endianness and qubit-order
-  tests.
 - [ ] Add a CLI for action tables, classifications, closure metadata, and JSON
   witness export.
 - [ ] Add analytically known positive and negative hierarchy examples beyond
@@ -35,6 +33,9 @@ coherent unit.
 
 ## Completed
 
+- [x] 2026-09-23 — Add exact phase-free Pauli arithmetic, binary symplectic
+  Clifford actions, bounded closure with explicit incomplete states, and dense
+  one- and two-qubit action/closure cross-checks.
 - [x] 2026-09-22 — Add direct streamed named-reference and tensor-Pauli
   recognition that retains algebraic labels, binary coordinates, and source
   coordinates without dense action-table cells, cross-checked against retained
