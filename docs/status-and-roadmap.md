@@ -17,6 +17,9 @@ Clifford-hierarchy decision procedure.
   performed exactly with binary symplectic tableaus. Bounded tableau closure
   preserves explicit incomplete states and represents actions modulo Pauli
   signs and Clifford phases, not full signed stabilizer tableaus.
+- Qiskit operators and circuits can be converted through an optional, lazy
+  interoperability layer that explicitly preserves this package's
+  qubit-zero-most-significant convention.
 - For standard Pauli probes, direct classifications expose the induced binary
   symplectic matrix for each recognized row and verify preservation of the
   symplectic form.
@@ -93,12 +96,12 @@ Clifford-hierarchy decision procedure.
 
 ### P2: interoperability and research workflow
 
-- Add optional Qiskit conversion for circuits/operators and explicit qubit
+- [x] Add optional Qiskit conversion for circuits/operators and explicit qubit
   ordering tests.
 - Provide a CLI that exports action tables, classification summaries, closure
   metadata, and witnesses as JSON.
 - Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next implementation target is optional Qiskit conversion with
-explicit endianness and qubit-order round-trip tests.
+The immediate next implementation target is a CLI for action tables,
+classification summaries, closure metadata, and JSON witness export.

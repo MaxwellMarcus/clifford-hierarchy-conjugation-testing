@@ -57,6 +57,7 @@ from .operators import (
     projectively_equal,
 )
 from .paulis import PauliWord, recognize_pauli_word
+from .qiskit import gate_from_qiskit, gate_to_qiskit_circuit, gate_to_qiskit_operator
 from .standard_gates import (
     DEFAULT_PAULI_CATALOG_LIMIT,
     embed_one_qubit_gate,
@@ -121,6 +122,9 @@ __all__ = [
     "generate_group",
     "generate_next_conjugation_group",
     "generate_tableau_group",
+    "gate_from_qiskit",
+    "gate_to_qiskit_circuit",
+    "gate_to_qiskit_operator",
     "hadamard_tableau",
     "pauli_generators",
     "phase_tableau",

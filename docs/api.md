@@ -16,6 +16,25 @@ most-significant Kronecker factor, matching the counterexample scripts.
 `embed_one_qubit_gate(gate, qubit, n)` exposes the same convention for other
 one-qubit gates.
 
+## Optional Qiskit conversion
+
+Install the `qiskit` extra to convert Qiskit operators and circuits without
+making Qiskit a core dependency:
+
+```python
+from clifford_conjugation import gate_from_qiskit, gate_to_qiskit_circuit
+
+gate = gate_from_qiskit(qiskit_circuit, name="U")
+round_trip = gate_to_qiskit_circuit(gate)
+```
+
+Qiskit's dense matrices display basis states as `|q_(n-1) ... q_0>`, while
+this package makes qubit zero the leftmost, most-significant tensor factor.
+`gate_from_qiskit`, `gate_to_qiskit_operator`, and
+`gate_to_qiskit_circuit` reverse tensor-factor order at that boundary so that
+numbered-qubit actions agree. This is a semantic conversion, not a raw matrix
+copy; direct copying would silently exchange qubits on multi-qubit inputs.
+
 Numerical projective equality is controlled by `ProjectiveConfig`. The
 canonicalization fixes the phase of the first numerically nonzero entry, zeros
 small real and imaginary parts, and rounds the result before hashing. This makes

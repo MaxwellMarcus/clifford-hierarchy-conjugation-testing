@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-23
+Last updated: 2026-09-24
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,14 +9,12 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Add optional Qiskit conversions with explicit ordering tests.**
-  Convert operators and circuits without making Qiskit a core dependency, and
-  pin the qubit-zero-most-significant convention in round-trip tests.
+- [ ] **Add a CLI for structured conjugation results.**
+  Export action tables, classifications, closure metadata, and numerical
+  witnesses as machine-readable JSON while preserving incomplete states.
 
 ## Next
 
-- [ ] Add a CLI for action tables, classifications, closure metadata, and JSON
-  witness export.
 - [ ] Add analytically known positive and negative hierarchy examples beyond
   the current elementary gates and five-qubit counterexample.
 
@@ -32,6 +30,9 @@ coherent unit.
 - [ ] Keep README, API documentation, version, and citation metadata aligned.
 
 ## Completed
+
+- [x] 2026-09-24 — Add optional Qiskit operator/circuit conversions with an
+  explicit tensor-factor reversal and asymmetric qubit-order round-trip tests.
 
 - [x] 2026-09-23 — Add exact phase-free Pauli arithmetic, binary symplectic
   Clifford actions, bounded closure with explicit incomplete states, and dense
