@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-24
+Last updated: 2026-09-27
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,9 +9,9 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Add a CLI for structured conjugation results.**
-  Export action tables, classifications, closure metadata, and numerical
-  witnesses as machine-readable JSON while preserving incomplete states.
+- [ ] **Add analytically known hierarchy examples beyond elementary gates.**
+  Introduce one independently justified positive and one negative example,
+  with exact checks where the gate domain permits them.
 
 ## Next
 
@@ -30,6 +30,10 @@ coherent unit.
 - [ ] Keep README, API documentation, version, and citation metadata aligned.
 
 ## Completed
+
+- [x] 2026-09-27 — Add a structured JSON CLI for numerical action tables and
+  group witnesses, preserving projective tolerances, provenance, search limits,
+  stop reasons, and explicit incomplete closure states.
 
 - [x] 2026-09-24 — Add optional Qiskit operator/circuit conversions with an
   explicit tensor-factor reversal and asymmetric qubit-order round-trip tests.

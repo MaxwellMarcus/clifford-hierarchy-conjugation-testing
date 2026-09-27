@@ -32,6 +32,7 @@ dev = [
 ]
 
 [project.scripts]
+clifford-conjugation = "clifford_conjugation.cli:main"
 verify-counterexample = "clifford_conjugation.de_silva_lautsch:main"
 
 [project.urls]

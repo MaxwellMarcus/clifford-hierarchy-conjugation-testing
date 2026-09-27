@@ -30,6 +30,8 @@ Clifford-hierarchy decision procedure.
 - Conjugation-group computations export a versioned JSON witness containing
   generator words, Pauli classifications, provenance, numerical tolerance, and
   explicit completeness metadata.
+- A command-line interface emits versioned JSON for full numerical action
+  tables or bounded group witnesses from arbitrary NumPy unitary files.
 - Version-one tensor-Pauli exports can be independently checked with exact
   binary action tables; the verifier checks classifications, provenance, and
   claimed complete Pauli closures without consulting dense matrices.
@@ -47,7 +49,7 @@ Clifford-hierarchy decision procedure.
   numerical five-qubit group analysis, and exact SymPy confirmation of its
   displayed witness.
 - The public API, examples, packaging, citation metadata, CI, and regression
-  tests are in place. At this checkpoint, 86 tests pass with 90% statement
+  tests are in place. At this checkpoint, 100 tests pass with 90% statement
   coverage and Ruff reports no issues.
 
 ## What the current guarantees mean
@@ -98,10 +100,10 @@ Clifford-hierarchy decision procedure.
 
 - [x] Add optional Qiskit conversion for circuits/operators and explicit qubit
   ordering tests.
-- Provide a CLI that exports action tables, classification summaries, closure
-  metadata, and witnesses as JSON.
+- [x] Provide a CLI that exports action tables, classification summaries,
+  closure metadata, and witnesses as JSON.
 - Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next implementation target is a CLI for action tables,
-classification summaries, closure metadata, and JSON witness export.
+The immediate next implementation target is a pair of independently justified
+positive and negative hierarchy examples beyond the elementary gates.
