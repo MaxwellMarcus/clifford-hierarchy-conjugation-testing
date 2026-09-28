@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-27
+Last updated: 2026-09-28
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,19 +9,18 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Add analytically known hierarchy examples beyond elementary gates.**
-  Introduce one independently justified positive and one negative example,
-  with exact checks where the gate domain permits them.
+- [ ] **Modernize the package license metadata.**
+  Replace the deprecated setuptools license table and redundant classifier
+  with an SPDX license expression before the 2027-02-18 removal date, then
+  rebuild both distribution artifacts and inspect their metadata.
 
 ## Next
 
-- [ ] Add analytically known positive and negative hierarchy examples beyond
-  the current elementary gates and five-qubit counterexample.
+- [ ] Carry recognized labels and provenance into later conjugation-group
+  levels and human-readable reports.
 
 ## Maintenance
 
-- [ ] Replace deprecated setuptools license-table/classifier metadata with an
-  SPDX license expression before the 2027-02-18 removal date.
 - [ ] Keep numerical and exact counterexample workflows passing.
 - [ ] Require the full test suite, Ruff, examples, counterexample verifiers,
   and package build before pushing an automated change.
@@ -30,6 +29,10 @@ coherent unit.
 - [ ] Keep README, API documentation, version, and citation metadata aligned.
 
 ## Completed
+
+- [x] 2026-09-28 — Add exact eighth-root diagonal phase-polynomial checks,
+  proving CCZ is properly in C3 and controlled-T is outside C3, with dense
+  conjugation cross-checks and a runnable example.
 
 - [x] 2026-09-27 — Add a structured JSON CLI for numerical action tables and
   group witnesses, preserving projective tolerances, provenance, search limits,

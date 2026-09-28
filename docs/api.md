@@ -35,6 +35,21 @@ this package makes qubit zero the leftmost, most-significant tensor factor.
 numbered-qubit actions agree. This is a semantic conversion, not a raw matrix
 copy; direct copying would silently exchange qubits on multi-qubit inputs.
 
+## Exact diagonal C3 examples
+
+`analyze_diagonal_c3(phase_exponents)` exactly checks third-level membership
+for diagonal gates whose entries are eighth roots of unity. The exponents are
+integers modulo eight in computational-basis order, with qubit zero the most
+significant bit. The result records the phase-polynomial coefficients, each
+conjugated-X diagonal factor, whether the original gate is Clifford, and
+whether it is in C3 or properly in C3.
+
+`ccz_gate()` and `controlled_t_gate()` provide dense versions of the documented
+positive and negative examples. `eighth_root_diagonal_gate` constructs other
+dense gates in the exact checker's domain. The hierarchy conclusion comes from
+integer phase arithmetic; dense matrices are for numerical cross-checks and
+the rest of the package's experimental workflows.
+
 Numerical projective equality is controlled by `ProjectiveConfig`. The
 canonicalization fixes the phase of the first numerically nonzero entry, zeros
 small real and imaginary parts, and rounds the result before hashing. This makes

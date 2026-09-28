@@ -32,6 +32,9 @@ Clifford-hierarchy decision procedure.
   explicit completeness metadata.
 - A command-line interface emits versioned JSON for full numerical action
   tables or bounded group witnesses from arbitrary NumPy unitary files.
+- Eighth-root diagonal phase polynomials provide exact C3 checks for a proper
+  CCZ positive example and a controlled-T negative example, independently
+  cross-checked through dense conjugation actions.
 - Version-one tensor-Pauli exports can be independently checked with exact
   binary action tables; the verifier checks classifications, provenance, and
   claimed complete Pauli closures without consulting dense matrices.
@@ -102,8 +105,8 @@ Clifford-hierarchy decision procedure.
   ordering tests.
 - [x] Provide a CLI that exports action tables, classification summaries,
   closure metadata, and witnesses as JSON.
-- Add analytically known hierarchy examples and negative cases beyond the
+- [x] Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next implementation target is a pair of independently justified
-positive and negative hierarchy examples beyond the elementary gates.
+The immediate next maintenance target is replacing deprecated setuptools
+license metadata with an SPDX expression before its scheduled removal.

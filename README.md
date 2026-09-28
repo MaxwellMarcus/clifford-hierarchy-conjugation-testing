@@ -30,6 +30,8 @@ counterexample in Theorem 8.1 of de Silva and Lautsch,
   distinguish proven closure from a truncated search.
 - Independent exact verification of version-one tensor-Pauli witness exports
   from caller-supplied binary action tables, including provenance and closure.
+- Exact integer phase-polynomial checks for eighth-root diagonal C3 examples,
+  including a proper-level CCZ witness and a controlled-T negative case.
 - Versioned group-search benchmarks that separate exact workload dimensions
   and completeness-aware outcomes from host runtime and Python peak memory.
 - Regression tests, continuous integration, packaging metadata, and citation
@@ -51,6 +53,7 @@ verify-counterexample
 python -m pytest
 python examples/basic_conjugation_groups.py
 python examples/action_table.py
+python examples/analytic_hierarchy_examples.py
 python examples/benchmark_group_search.py
 ```
 
@@ -83,6 +86,8 @@ See [the API guide](docs/api.md) for generator-image actions, the precise
 conjugation convention, projective-equality policy, iteration methods, and
 incomplete-search semantics. [Status and roadmap](docs/status-and-roadmap.md)
 separates the current guarantees from the next research-engineering steps.
+The [analytic hierarchy examples](docs/analytic-hierarchy-examples.md) explain
+the exact CCZ and controlled-T arguments and the bounded gate domain.
 
 `run_conjugation_group_benchmark` records qubit count, conjugator source size,
 probe and deduplicated-generator counts, closure limits, products tested,
