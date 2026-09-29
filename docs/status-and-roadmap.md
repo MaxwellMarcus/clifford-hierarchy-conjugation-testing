@@ -52,8 +52,8 @@ Clifford-hierarchy decision procedure.
   numerical five-qubit group analysis, and exact SymPy confirmation of its
   displayed witness.
 - The public API, examples, packaging, citation metadata, CI, and regression
-  tests are in place. At this checkpoint, 100 tests pass with 90% statement
-  coverage and Ruff reports no issues.
+  tests are in place. Package metadata uses a PEP 639 SPDX expression and
+  explicitly includes the MIT license file.
 
 ## What the current guarantees mean
 
@@ -108,5 +108,6 @@ Clifford-hierarchy decision procedure.
 - [x] Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next maintenance target is replacing deprecated setuptools
-license metadata with an SPDX expression before its scheduled removal.
+The immediate next target is carrying recognized action labels, binary Pauli
+coordinates, and source provenance into later conjugation-group levels and a
+deterministic human-readable report.

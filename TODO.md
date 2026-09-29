@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-28
+Last updated: 2026-09-29
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,15 +9,15 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Modernize the package license metadata.**
-  Replace the deprecated setuptools license table and redundant classifier
-  with an SPDX license expression before the 2027-02-18 removal date, then
-  rebuild both distribution artifacts and inspect their metadata.
+- [ ] **Propagate recognized action provenance into group levels.**
+  Carry recognized labels, binary Pauli coordinates, and source row/probe
+  provenance into later `ConjugationGroup` records and a deterministic human-
+  readable report, with complete and truncated-source regression tests.
 
 ## Next
 
-- [ ] Carry recognized labels and provenance into later conjugation-group
-  levels and human-readable reports.
+- [ ] Add a checked release workflow that builds and validates wheel and sdist
+  metadata before publishing.
 
 ## Maintenance
 
@@ -29,6 +29,11 @@ coherent unit.
 - [ ] Keep README, API documentation, version, and citation metadata aligned.
 
 ## Completed
+
+- [x] 2026-09-29 — Replace deprecated license-table metadata and the redundant
+  license classifier with an SPDX `MIT` expression, explicitly ship `LICENSE`,
+  require a PEP 639-capable setuptools, and inspect rebuilt wheel/sdist
+  metadata.
 
 - [x] 2026-09-28 — Add exact eighth-root diagonal phase-polynomial checks,
   proving CCZ is properly in C3 and controlled-T is outside C3, with dense
