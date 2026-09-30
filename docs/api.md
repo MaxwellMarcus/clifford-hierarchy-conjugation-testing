@@ -268,6 +268,20 @@ truncated, later computations can still be inspected, but `source_complete` and
 `complete` remain false. Thus a finite closure from incomplete input is never
 misreported as the full next group.
 
+Every generated level also exposes `recognized_generators`, aligned with
+`defining_generators`. Each `RecognizedGeneratorProvenance` retains the direct
+numerical tensor-Pauli recognition as a `PauliWord` (or `None`), its
+conventional label, binary `(x_mask, z_mask)` coordinates, and every
+deduplicated `GeneratorSource`. This information is retained for later levels
+and for streamed group generation even when no action table is kept.
+
+`group.format_report()` (equivalently `format_conjugation_group(group)`) emits
+a deterministic text report containing source and closure completeness, a
+proven order only when the whole level is complete, recognized labels and
+binary coordinates, and stable row/column provenance. Recognition remains a
+configured-tolerance numerical statement; an unrecognized entry is not an
+exact non-Pauli proof.
+
 The recommended workflow is therefore:
 
 1. Inspect `conjugation_action` for a single gate or

@@ -29,7 +29,9 @@ from .benchmarking import (
 )
 from .conjugation import (
     ConjugationGroup,
+    RecognizedGeneratorProvenance,
     conjugate,
+    format_conjugation_group,
     generate_conjugation_group,
     generate_conjugation_groups,
     generate_next_conjugation_group,
@@ -106,6 +108,7 @@ __all__ = [
     "PauliActionClassification",
     "PauliWord",
     "ProjectiveConfig",
+    "RecognizedGeneratorProvenance",
     "SearchLimits",
     "StreamedConjugationGenerators",
     "StreamedActionImageClassification",
@@ -129,6 +132,7 @@ __all__ = [
     "embed_one_qubit_gate",
     "eighth_root_diagonal_gate",
     "export_numerical_witness",
+    "format_conjugation_group",
     "generate_conjugation_group",
     "generate_conjugation_groups",
     "generate_group",

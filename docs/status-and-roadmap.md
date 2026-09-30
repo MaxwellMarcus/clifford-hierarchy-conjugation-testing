@@ -48,6 +48,10 @@ Clifford-hierarchy decision procedure.
 - Iterated conjugation groups retain their action tables and propagate an
   incomplete-source flag, so a later closure from truncated input is never
   reported as the full group.
+- Every generated level aligns its defining generators with numerical
+  tensor-Pauli labels, binary X/Z masks, and all row/probe sources. A stable
+  text report prints those records while keeping incomplete groups and unknown
+  orders explicit.
 - The de Silva--Lautsch case study includes an exact finite-field verifier, a
   numerical five-qubit group analysis, and exact SymPy confirmation of its
   displayed witness.
@@ -71,8 +75,8 @@ Clifford-hierarchy decision procedure.
 
 ### P0: retain algebraic provenance across levels
 
-- Carry recognized labels and provenance into conjugation-group levels and
-  human-readable reports.
+- [x] Carry recognized labels, binary coordinates, and provenance into
+  conjugation-group levels and deterministic human-readable reports.
 - [x] Record every source row and probe for each deduplicated defining
   generator, including groups generated from incomplete sources.
 
@@ -108,6 +112,5 @@ Clifford-hierarchy decision procedure.
 - [x] Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next target is carrying recognized action labels, binary Pauli
-coordinates, and source provenance into later conjugation-group levels and a
-deterministic human-readable report.
+The immediate next target is a checked release workflow that builds and
+inspects wheel and sdist artifacts before any publication step.

@@ -13,6 +13,44 @@ from .actions import (
 from .actions import conjugate as conjugate
 from .groups import DEFAULT_SEARCH_LIMITS, GroupClosure, SearchLimits, generate_group
 from .operators import Gate, GateSet
+from .paulis import PauliWord, recognize_pauli_word
+
+
+@dataclass(frozen=True)
+class RecognizedGeneratorProvenance:
+    """Recognition and source coordinates for one defining generator.
+
+    ``pauli_word`` is a numerical projective recognition result. A missing
+    value means only that the dense representative was not recognized as a
+    tensor Pauli under the group's configured tolerance.
+    """
+
+    generator_index: int
+    generator_name: str
+    pauli_word: PauliWord | None
+    sources: tuple[GeneratorSource, ...]
+
+    def __post_init__(self) -> None:
+        if self.generator_index < 0:
+            raise ValueError("generator index must be nonnegative")
+        if not self.generator_name:
+            raise ValueError("generator name must be nonempty")
+        if not self.sources:
+            raise ValueError("recognized-generator provenance must not be empty")
+
+    @property
+    def label(self) -> str | None:
+        """Conventional recognized Pauli label, if available."""
+
+        return None if self.pauli_word is None else self.pauli_word.label
+
+    @property
+    def binary_coordinates(self) -> tuple[int, int] | None:
+        """Return ``(x_mask, z_mask)`` for a recognized tensor Pauli."""
+
+        if self.pauli_word is None:
+            return None
+        return self.pauli_word.x_mask, self.pauli_word.z_mask
 
 
 @dataclass(frozen=True)
@@ -75,6 +113,63 @@ class ConjugationGroup:
         """Return the proven full order, or ``None`` if either search was partial."""
 
         return len(self.elements) if self.complete else None
+
+    @property
+    def recognized_generators(self) -> tuple[RecognizedGeneratorProvenance, ...]:
+        """Defining-generator recognition aligned with retained provenance."""
+
+        return tuple(
+            RecognizedGeneratorProvenance(
+                generator_index=index,
+                generator_name=generator.name,
+                pauli_word=recognize_pauli_word(
+                    generator.matrix,
+                    self.defining_generators.projective_config,
+                ),
+                sources=sources,
+            )
+            for index, (generator, sources) in enumerate(
+                zip(
+                    self.defining_generators,
+                    self.defining_generator_sources,
+                    strict=True,
+                )
+            )
+        )
+
+    def format_report(self) -> str:
+        """Return a deterministic human-readable level report."""
+
+        return format_conjugation_group(self)
+
+
+def format_conjugation_group(group: ConjugationGroup) -> str:
+    """Format completeness, recognition, binary coordinates, and provenance."""
+
+    if not isinstance(group, ConjugationGroup):
+        raise TypeError("group must be a ConjugationGroup")
+    lines = [
+        f"Gamma_{group.level}",
+        f"source: {'complete' if group.source_complete else 'incomplete'}",
+        f"closure: {group.closure.stop_reason.value}",
+        f"group: {'complete' if group.complete else 'incomplete'}",
+        f"order: {group.order if group.order is not None else 'unknown'}",
+        "defining generators:",
+    ]
+    for record in group.recognized_generators:
+        if record.pauli_word is None:
+            recognition = "unrecognized tensor Pauli"
+        else:
+            recognition = (
+                f"{record.label} "
+                f"(x_mask={record.pauli_word.x_mask}, z_mask={record.pauli_word.z_mask})"
+            )
+        lines.append(f"  [{record.generator_index}] {recognition}")
+        for source in record.sources:
+            lines.append(
+                f"    source[{source.row_index},{source.column_index}]: {source.label}"
+            )
+    return "\n".join(lines)
 
 
 def generate_conjugation_group(

@@ -7,6 +7,7 @@ from clifford_conjugation import (
     ProjectiveConfig,
     SearchLimits,
     conjugate,
+    format_conjugation_group,
     generate_conjugation_group,
     generate_conjugation_groups,
     generate_next_conjugation_group,
@@ -108,6 +109,55 @@ def test_next_level_preserves_sources_from_incomplete_group() -> None:
     assert second.action_table is not None
     assert second.defining_generator_sources == second.action_table.unique_image_sources
     assert all(second.defining_generator_sources)
+
+
+def test_complete_level_retains_recognized_labels_coordinates_and_report() -> None:
+    probes = GateSet([Gate("X", X), Gate("Z", Z)])
+    first, second = generate_conjugation_groups(Gate("H", H), probes, depth=2)
+
+    assert tuple(record.label for record in second.recognized_generators) == ("X_0", "Z_0")
+    assert tuple(record.binary_coordinates for record in second.recognized_generators) == (
+        (1, 0),
+        (0, 1),
+    )
+    assert second.recognized_generators[0].sources[0].label == "I conjugates X"
+    assert format_conjugation_group(second) == second.format_report()
+    assert second.format_report() == (
+        "Gamma_2\n"
+        "source: complete\n"
+        "closure: complete\n"
+        "group: complete\n"
+        "order: 4\n"
+        "defining generators:\n"
+        "  [0] X_0 (x_mask=1, z_mask=0)\n"
+        "    source[0,0]: I conjugates X\n"
+        "    source[1,0]: g1 conjugates X\n"
+        "    source[2,0]: g2 conjugates X\n"
+        "    source[3,0]: g3 conjugates X\n"
+        "  [1] Z_0 (x_mask=0, z_mask=1)\n"
+        "    source[0,1]: I conjugates Z\n"
+        "    source[1,1]: g1 conjugates Z\n"
+        "    source[2,1]: g2 conjugates Z\n"
+        "    source[3,1]: g3 conjugates Z"
+    )
+
+
+def test_truncated_source_report_never_claims_full_group_order() -> None:
+    probes = GateSet([Gate("X", X), Gate("Z", Z)])
+    theta = np.pi * np.sqrt(2)
+    first = generate_conjugation_group(
+        Gate("R", np.diag([1, np.exp(1j * theta)])),
+        probes,
+        limits=SearchLimits(max_elements=3, max_products=100),
+    )
+    second = generate_next_conjugation_group(first, probes)
+    report = second.format_report()
+
+    assert second.recognized_generators
+    assert "source: incomplete" in report
+    assert "group: incomplete" in report
+    assert "order: unknown" in report
+    assert "source[" in report
 
 
 def test_conjugation_input_validation() -> None:

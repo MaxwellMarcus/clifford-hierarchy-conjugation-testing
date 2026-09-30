@@ -18,11 +18,8 @@ def main() -> None:
         limits=SearchLimits(max_elements=100, max_products=1_000),
     )
     for group in groups:
-        print(
-            f"Gamma_{group.level}: order={group.order}, "
-            f"defining_generators={len(group.defining_generators)}, "
-            f"complete={group.complete}"
-        )
+        print(group.format_report())
+        print()
 
 
 if __name__ == "__main__":

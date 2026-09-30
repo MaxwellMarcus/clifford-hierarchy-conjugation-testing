@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-29
+Last updated: 2026-09-30
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,15 +9,15 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Propagate recognized action provenance into group levels.**
-  Carry recognized labels, binary Pauli coordinates, and source row/probe
-  provenance into later `ConjugationGroup` records and a deterministic human-
-  readable report, with complete and truncated-source regression tests.
+- [ ] **Add a checked release workflow.**
+  Build wheel and sdist artifacts in CI, inspect their metadata and contents,
+  and gate publication on the full validation suite without adding automatic
+  publication credentials yet.
 
 ## Next
 
-- [ ] Add a checked release workflow that builds and validates wheel and sdist
-  metadata before publishing.
+- [ ] Add signed-tag release publication only after the artifact checks and
+  repository release policy are documented.
 
 ## Maintenance
 
@@ -29,6 +29,11 @@ coherent unit.
 - [ ] Keep README, API documentation, version, and citation metadata aligned.
 
 ## Completed
+
+- [x] 2026-09-30 — Carry direct tensor-Pauli labels, binary X/Z masks, and all
+  deduplicated row/probe sources into every generated conjugation-group level,
+  with deterministic reports that preserve incomplete-source and unknown-order
+  states.
 
 - [x] 2026-09-29 — Replace deprecated license-table metadata and the redundant
   license classifier with an SPDX `MIT` expression, explicitly ship `LICENSE`,
