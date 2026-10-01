@@ -58,6 +58,9 @@ Clifford-hierarchy decision procedure.
 - The public API, examples, packaging, citation metadata, CI, and regression
   tests are in place. Package metadata uses a PEP 639 SPDX expression and
   explicitly includes the MIT license file.
+- A checked release workflow gates wheel/sdist construction on the full
+  validation matrix, checks metadata and required contents, and uploads only
+  inspected artifacts. It has read-only permissions and no publication step.
 
 ## What the current guarantees mean
 
@@ -112,5 +115,5 @@ Clifford-hierarchy decision procedure.
 - [x] Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next target is a checked release workflow that builds and
-inspects wheel and sdist artifacts before any publication step.
+The immediate next target is a documented signed-tag and trusted-publisher
+policy that consumes the already inspected artifacts without rebuilding them.

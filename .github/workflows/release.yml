@@ -1,0 +1,95 @@
+name: Release checks
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install package and development dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[dev]"
+      - name: Lint
+        run: python -m ruff check src tests examples
+      - name: Run tests
+        run: python -m pytest
+      - name: Run documented examples and counterexample workflows
+        run: |
+          python examples/action_table.py
+          python examples/basic_conjugation_groups.py
+          python examples/analytic_hierarchy_examples.py
+          python examples/benchmark_group_search.py
+          python examples/de_silva_lautsch/verify_counterexample.py
+          python examples/de_silva_lautsch/analyze_conjugation_groups.py
+          python examples/de_silva_lautsch/exact_counterexample_witness.py
+
+  build-and-inspect:
+    name: Build and inspect distributions
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install build inspection tools
+        run: python -m pip install --upgrade pip build twine
+      - name: Build wheel and source distribution
+        run: python -m build
+      - name: Check distribution metadata
+        run: python -m twine check --strict dist/*
+      - name: Inspect artifact metadata and contents
+        run: |
+          python - <<'PY'
+          from email.parser import BytesParser
+          from pathlib import Path
+          import tarfile
+          import tomllib
+          import zipfile
+
+          project = tomllib.loads(Path("pyproject.toml").read_text())["project"]
+          wheel, = Path("dist").glob("*.whl")
+          sdist, = Path("dist").glob("*.tar.gz")
+
+          with zipfile.ZipFile(wheel) as archive:
+              wheel_names = set(archive.namelist())
+              metadata_name, = (name for name in wheel_names if name.endswith(".dist-info/METADATA"))
+              metadata = BytesParser().parsebytes(archive.read(metadata_name))
+          assert metadata["Name"] == project["name"]
+          assert metadata["Version"] == project["version"]
+          assert metadata["License-Expression"] == project["license"]
+          assert any(name.endswith(".dist-info/licenses/LICENSE") for name in wheel_names)
+          assert "clifford_conjugation/py.typed" in wheel_names
+
+          with tarfile.open(sdist) as archive:
+              sdist_names = {member.name for member in archive.getmembers()}
+          required_suffixes = (
+              "/LICENSE",
+              "/README.md",
+              "/pyproject.toml",
+              "/src/clifford_conjugation/py.typed",
+          )
+          for suffix in required_suffixes:
+              assert any(name.endswith(suffix) for name in sdist_names), suffix
+          PY
+      - uses: actions/upload-artifact@v6
+        with:
+          name: checked-distributions
+          path: dist/*
+          if-no-files-found: error

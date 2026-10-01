@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-09-30
+Last updated: 2026-10-01
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,15 +9,15 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Add a checked release workflow.**
-  Build wheel and sdist artifacts in CI, inspect their metadata and contents,
-  and gate publication on the full validation suite without adding automatic
-  publication credentials yet.
+- [ ] **Define signed-tag publication policy and trusted publishing.**
+  Document tag/version invariants, a protected release environment, and the
+  trusted-publisher boundary; make any future publication job consume the
+  already inspected artifacts without rebuilding them.
 
 ## Next
 
-- [ ] Add signed-tag release publication only after the artifact checks and
-  repository release policy are documented.
+- [ ] Implement signed-tag publication only after the policy is reviewed and
+  the protected environment is configured.
 
 ## Maintenance
 
@@ -29,6 +29,11 @@ coherent unit.
 - [ ] Keep README, API documentation, version, and citation metadata aligned.
 
 ## Completed
+
+- [x] 2026-10-01 — Add a read-only release workflow that gates wheel/sdist
+  builds on the full validation matrix, strictly checks metadata and required
+  contents, uploads inspected artifacts, and documents that no publication
+  credentials or upload step are present.
 
 - [x] 2026-09-30 — Carry direct tensor-Pauli labels, binary X/Z masks, and all
   deduplicated row/probe sources into every generated conjugation-group level,
