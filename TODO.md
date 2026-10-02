@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-10-01
+Last updated: 2026-10-02
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,15 +9,16 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Define signed-tag publication policy and trusted publishing.**
-  Document tag/version invariants, a protected release environment, and the
-  trusted-publisher boundary; make any future publication job consume the
-  already inspected artifacts without rebuilding them.
+- [ ] **Exercise the checked-artifact handoff without publishing.**
+  Add a dependent consumer job that downloads `checked-distributions`, verifies
+  `SHA256SUMS`, asserts exactly one wheel and one source distribution, and never
+  invokes a build backend or requests an OIDC token.
 
 ## Next
 
-- [ ] Implement signed-tag publication only after the policy is reviewed and
-  the protected environment is configured.
+- [ ] Add tag-signature and `main`-ancestry verification after approved signer
+  keys are documented, then implement trusted publication only after the
+  protected `pypi` environment and PyPI publisher are configured.
 
 ## Maintenance
 
@@ -29,6 +30,11 @@ coherent unit.
 - [ ] Keep README, API documentation, version, and citation metadata aligned.
 
 ## Completed
+
+- [x] 2026-10-02 — Define stable tag/project/citation version invariants,
+  signed-tag and protected-environment requirements, the scoped OIDC trusted-
+  publisher boundary, and a no-rebuild artifact handoff; enforce version
+  identity and include SHA-256 checksums in checked artifacts.
 
 - [x] 2026-10-01 — Add a read-only release workflow that gates wheel/sdist
   builds on the full validation matrix, strictly checks metadata and required

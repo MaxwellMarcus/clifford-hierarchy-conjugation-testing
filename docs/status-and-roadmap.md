@@ -59,8 +59,12 @@ Clifford-hierarchy decision procedure.
   tests are in place. Package metadata uses a PEP 639 SPDX expression and
   explicitly includes the MIT license file.
 - A checked release workflow gates wheel/sdist construction on the full
-  validation matrix, checks metadata and required contents, and uploads only
-  inspected artifacts. It has read-only permissions and no publication step.
+  validation matrix, enforces tag/project/citation version identity, checks
+  metadata and required contents, and uploads only inspected artifacts with
+  SHA-256 handoff data. It has read-only permissions and no publication step.
+- The signed-tag, protected `pypi` environment, trusted-publisher, scoped OIDC,
+  and no-rebuild artifact-consumption policy is documented. Signature and
+  ancestry verification plus external publisher configuration remain pending.
 
 ## What the current guarantees mean
 
@@ -115,5 +119,6 @@ Clifford-hierarchy decision procedure.
 - [x] Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next target is a documented signed-tag and trusted-publisher
-policy that consumes the already inspected artifacts without rebuilding them.
+The immediate next target is a non-publishing consumer job that downloads the
+checked distributions, verifies their recorded SHA-256 checksums, and proves
+the no-rebuild handoff before any trusted-publisher job is enabled.
