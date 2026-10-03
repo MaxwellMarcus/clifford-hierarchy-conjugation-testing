@@ -27,6 +27,14 @@ trusted-publisher permission, signing key, release creation, or upload command.
 A successful run therefore means that downloadable artifacts passed the stated
 checks; it does not mean a release was published.
 
+After the build job, a dependent non-publishing consumer downloads
+`checked-distributions`, requires exactly one wheel, one source distribution,
+and `SHA256SUMS`, and recomputes both hashes with
+`tools/check_checked_artifacts.py`. The consumer requests only
+`contents: read`: it has no OIDC permission, package-index upload step, or
+build command. This exercises the byte-for-byte handoff without treating it as
+publication.
+
 ## Release identity and signed-tag policy
 
 A production release is eligible only when all of these invariants hold:
@@ -67,7 +75,7 @@ not check out source, invoke a build backend, modify metadata, or substitute a
 different artifact. This keeps the bytes inspected by the read-only job equal
 to the bytes offered to PyPI.
 
-The next repository-only milestone is a non-publishing consumer job that
-exercises this download-and-verify handoff. Actual publication remains blocked
-on reviewed signer keys plus the external protected-environment and PyPI
-trusted-publisher configuration.
+The next repository-only milestone is tag-signature and `main`-ancestry
+verification after approved signer keys are documented. Actual publication
+remains blocked on those checks plus the external protected-environment and
+PyPI trusted-publisher configuration.

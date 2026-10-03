@@ -97,3 +97,18 @@ jobs:
           name: checked-distributions
           path: dist/*
           if-no-files-found: error
+
+  consume-checked-artifacts:
+    name: Verify checked-artifact handoff
+    needs: build-and-inspect
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v7
+        with:
+          name: checked-distributions
+          path: dist
+      - name: Verify checksums and artifact cardinality
+        run: python tools/check_checked_artifacts.py dist

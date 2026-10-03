@@ -62,9 +62,13 @@ Clifford-hierarchy decision procedure.
   validation matrix, enforces tag/project/citation version identity, checks
   metadata and required contents, and uploads only inspected artifacts with
   SHA-256 handoff data. It has read-only permissions and no publication step.
+- A dependent non-publishing consumer downloads those exact artifacts, requires
+  one wheel and one source distribution, and verifies both SHA-256 digests
+  without invoking a build backend or requesting OIDC.
 - The signed-tag, protected `pypi` environment, trusted-publisher, scoped OIDC,
-  and no-rebuild artifact-consumption policy is documented. Signature and
-  ancestry verification plus external publisher configuration remain pending.
+  and no-rebuild artifact-consumption policy is documented. The no-rebuild
+  handoff is exercised; signature and ancestry verification plus external
+  publisher configuration remain pending.
 
 ## What the current guarantees mean
 
