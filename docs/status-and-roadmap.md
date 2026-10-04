@@ -65,10 +65,13 @@ Clifford-hierarchy decision procedure.
 - A dependent non-publishing consumer downloads those exact artifacts, requires
   one wheel and one source distribution, and verifies both SHA-256 digests
   without invoking a build backend or requesting OIDC.
+- Tag-triggered artifact builds require an annotated SSH signature from the
+  committed maintainer allowlist and reject release commits outside
+  `origin/main`.
 - The signed-tag, protected `pypi` environment, trusted-publisher, scoped OIDC,
   and no-rebuild artifact-consumption policy is documented. The no-rebuild
-  handoff is exercised; signature and ancestry verification plus external
-  publisher configuration remain pending.
+  handoff plus signature and ancestry gates are exercised; external publisher
+  configuration remains pending.
 
 ## What the current guarantees mean
 
@@ -123,6 +126,6 @@ Clifford-hierarchy decision procedure.
 - [x] Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next target is a non-publishing consumer job that downloads the
-checked distributions, verifies their recorded SHA-256 checksums, and proves
-the no-rebuild handoff before any trusted-publisher job is enabled.
+The immediate next target is confirming the protected `pypi` environment,
+required reviewers, protected tag rule, and matching PyPI trusted publisher
+before any upload job is enabled.

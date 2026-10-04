@@ -15,11 +15,14 @@ The gated artifact job then:
 
 1. checks that `pyproject.toml`, `CITATION.cff`, and a triggering tag (when
    present) identify exactly the same stable `X.Y.Z` release;
-2. builds exactly one wheel and one source distribution with `python -m build`;
-3. runs strict `twine check` metadata validation;
-4. checks the name, version, SPDX license expression, packaged license, typed
+2. for tag-triggered runs, requires an annotated SSH-signed tag, verifies its
+   signature against `.github/release-signers`, and proves its commit is
+   reachable from `origin/main`;
+3. builds exactly one wheel and one source distribution with `python -m build`;
+4. runs strict `twine check` metadata validation;
+5. checks the name, version, SPDX license expression, packaged license, typed
    package marker, and essential source-distribution files; and
-5. records SHA-256 checksums and uploads the inspected files plus
+6. records SHA-256 checksums and uploads the inspected files plus
    `SHA256SUMS` as the `checked-distributions` workflow artifact.
 
 The workflow has read-only repository permissions and contains no PyPI token,
@@ -47,10 +50,20 @@ A production release is eligible only when all of these invariants hold:
   matching tag name as authentication; and
 - the source commit has passed the protected `main` checks.
 
-`tools/check_release_policy.py` enforces the version and tag-name invariants in
-the checked-artifact job. The current workflow does **not** fetch maintainer
-keys, verify a tag signature, check tag ancestry, or publish. A successful
-`v*` artifact run is therefore not yet publication authorization.
+`tools/check_release_policy.py` enforces the version and tag-name invariants.
+`tools/check_tag_provenance.py` rejects lightweight tags, signatures absent
+from the committed SSH allowlist, and tagged commits outside `origin/main`.
+The approved signer is:
+
+```text
+maxwellmarcus2024@gmail.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICABJCm3i6AuPPjImVJ4eRDRBmoREzbOPmUlIhz7tKRm
+```
+
+Changing the allowlist is a security-sensitive repository change and does not
+retroactively authorize a moved tag. Manual workflow dispatches are useful for
+non-release artifact inspection and have no tag to authenticate. The current
+workflow still does **not** publish, so a successful `v*` artifact run is not
+publication authorization.
 
 ## Protected environment and trusted-publisher boundary
 
@@ -75,7 +88,6 @@ not check out source, invoke a build backend, modify metadata, or substitute a
 different artifact. This keeps the bytes inspected by the read-only job equal
 to the bytes offered to PyPI.
 
-The next repository-only milestone is tag-signature and `main`-ancestry
-verification after approved signer keys are documented. Actual publication
-remains blocked on those checks plus the external protected-environment and
-PyPI trusted-publisher configuration.
+Actual publication remains blocked on external confirmation of the protected
+`pypi` environment, required reviewers, protected tag rule, and matching PyPI
+trusted-publisher configuration.

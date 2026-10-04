@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-10-03
+Last updated: 2026-10-04
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,15 +9,14 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Add tag-signature and `main`-ancestry verification.**
-  Document approved maintainer signing keys, then require a valid annotated tag
-  signature and prove the release commit descends from `origin/main` without
-  enabling trusted publication.
+- [ ] **Verify the external trusted-publisher prerequisites.**
+  Confirm that the protected `pypi` environment, required reviewers, protected
+  tag rule, and matching PyPI trusted publisher exist before enabling upload.
 
 ## Next
 
-- [ ] Implement trusted publication only after the protected `pypi`
-  environment and PyPI publisher are configured.
+- [ ] Implement trusted publication from the checked artifacts only after the
+  external configuration is confirmed.
 
 ## Maintenance
 
@@ -29,6 +28,10 @@ coherent unit.
 - [ ] Keep README, API documentation, version, and citation metadata aligned.
 
 ## Completed
+
+- [x] 2026-10-04 — Document the approved maintainer SSH key and require an
+  annotated tag with a valid allowlisted signature whose commit is reachable
+  from `origin/main`, without enabling trusted publication.
 
 - [x] 2026-10-03 — Add a dependent, read-only consumer job that downloads
   `checked-distributions`, requires exactly one wheel and source distribution,
