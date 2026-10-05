@@ -91,3 +91,25 @@ to the bytes offered to PyPI.
 Actual publication remains blocked on external confirmation of the protected
 `pypi` environment, required reviewers, protected tag rule, and matching PyPI
 trusted-publisher configuration.
+
+Run the fail-closed preflight after an administrator configures those controls:
+
+```bash
+python tools/check_publication_prerequisites.py --json
+```
+
+The GitHub checks are read directly through the authenticated `gh` CLI. PyPI
+does not expose trusted-publisher configuration through its public project API,
+so an administrator must inspect the PyPI project settings and then rerun with
+`--pypi-publisher-confirmed`. That flag attests only the exact tuple printed by
+the tool: owner `MaxwellMarcus`, repository
+`clifford-hierarchy-conjugation-testing`, workflow `release.yml`, and
+environment `pypi`.
+
+The `v*` tag ruleset must restrict both updates and deletions. Blocking only
+non-fast-forward changes is insufficient for an immutable release tag because
+moving a tag forward would still change the authenticated release identity.
+
+On 2026-10-05 the read-only GitHub audit found no `pypi` environment and no
+repository rulesets. Publication therefore remains disabled; this observed
+absence is not a successful prerequisite verification.

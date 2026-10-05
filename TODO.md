@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-10-04
+Last updated: 2026-10-05
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -9,9 +9,10 @@ coherent unit.
 
 ## Current focus
 
-- [ ] **Verify the external trusted-publisher prerequisites.**
-  Confirm that the protected `pypi` environment, required reviewers, protected
-  tag rule, and matching PyPI trusted publisher exist before enabling upload.
+- [ ] **Configure and re-audit the external trusted-publisher prerequisites.**
+  Create the currently missing protected `pypi` environment, required
+  reviewers, immutable `v*` tag ruleset, and matching PyPI trusted publisher;
+  then obtain a passing fail-closed preflight before enabling upload.
 
 ## Next
 
@@ -28,6 +29,10 @@ coherent unit.
 - [ ] Keep README, API documentation, version, and citation metadata aligned.
 
 ## Completed
+
+- [x] 2026-10-05 — Add a fail-closed external publication preflight with
+  focused tests, record that the live repository currently has neither a
+  `pypi` environment nor tag rulesets, and keep upload disabled.
 
 - [x] 2026-10-04 — Document the approved maintainer SSH key and require an
   annotated tag with a valid allowlisted signature whose commit is reachable
