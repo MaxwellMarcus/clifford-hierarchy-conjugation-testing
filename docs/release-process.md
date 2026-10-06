@@ -88,9 +88,10 @@ not check out source, invoke a build backend, modify metadata, or substitute a
 different artifact. This keeps the bytes inspected by the read-only job equal
 to the bytes offered to PyPI.
 
-Actual publication remains blocked on external confirmation of the protected
-`pypi` environment, required reviewers, protected tag rule, and matching PyPI
-trusted-publisher configuration.
+Actual publication remains blocked on the matching PyPI trusted-publisher
+configuration. The GitHub `pypi` environment, required reviewer, custom `v*`
+deployment policy, and active ruleset preventing updates and deletion of `v*`
+tags were configured and audited on 2026-10-06.
 
 Run the fail-closed preflight after an administrator configures those controls:
 
@@ -110,6 +111,8 @@ The `v*` tag ruleset must restrict both updates and deletions. Blocking only
 non-fast-forward changes is insufficient for an immutable release tag because
 moving a tag forward would still change the authenticated release identity.
 
-On 2026-10-05 the read-only GitHub audit found no `pypi` environment and no
-repository rulesets. Publication therefore remains disabled; this observed
-absence is not a successful prerequisite verification.
+On 2026-10-06 the GitHub audit passed all four repository-side checks. The PyPI
+project is not yet published, and no pending trusted publisher could be
+confirmed from the available unauthenticated PyPI session. Publication remains
+disabled until an administrator creates the exact pending publisher tuple and
+reruns the preflight with `--pypi-publisher-confirmed`.

@@ -69,14 +69,14 @@ Clifford-hierarchy decision procedure.
   committed maintainer allowlist and reject release commits outside
   `origin/main`.
 - The signed-tag, protected `pypi` environment, trusted-publisher, scoped OIDC,
-  and no-rebuild artifact-consumption policy is documented. The no-rebuild
-  handoff plus signature and ancestry gates are exercised; external publisher
-  configuration remains pending.
+  and no-rebuild artifact-consumption policy is documented. The GitHub
+  environment, required reviewer, `v*` deployment restriction, and immutable
+  `v*` tag ruleset are live; the PyPI publisher remains pending.
 - A fail-closed preflight audits the live GitHub environment, reviewer,
   deployment-policy, and immutable-tag controls and requires a separate manual
-  assertion for the non-public PyPI trusted-publisher setting. The 2026-10-05
-  audit found no `pypi` environment or repository rulesets, so publication
-  remains blocked.
+  assertion for the non-public PyPI trusted-publisher setting. The 2026-10-06
+  audit passes every GitHub check and fails closed only because the matching
+  PyPI trusted publisher has not been configured or confirmed.
 
 ## What the current guarantees mean
 
@@ -131,7 +131,6 @@ Clifford-hierarchy decision procedure.
 - [x] Add analytically known hierarchy examples and negative cases beyond the
   current Hadamard/phase examples and the five-qubit case study.
 
-The immediate next target is configuring the missing protected `pypi`
-environment, required reviewers, immutable `v*` tag ruleset, and matching PyPI
-trusted publisher, then obtaining a passing preflight before any upload job is
-enabled.
+The immediate next target is configuring the matching PyPI trusted publisher
+for `release.yml` and environment `pypi`, then obtaining a passing preflight
+before any upload job is enabled.
