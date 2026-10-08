@@ -99,7 +99,9 @@ Run the fail-closed preflight after an administrator configures those controls:
 python tools/check_publication_prerequisites.py --json
 ```
 
-The GitHub checks are read directly through the authenticated `gh` CLI. PyPI
+The GitHub checks are read directly through the authenticated `gh` CLI. The
+environment audit requires the exact user reviewer `MaxwellMarcus`; a
+nonempty reviewer list containing a different user or team does not pass. PyPI
 does not expose trusted-publisher configuration through its public project API,
 so an administrator must inspect the PyPI project settings and then rerun with
 `--pypi-publisher-confirmed`. That flag attests only the exact tuple printed by
@@ -111,8 +113,9 @@ The `v*` tag ruleset must restrict both updates and deletions. Blocking only
 non-fast-forward changes is insufficient for an immutable release tag because
 moving a tag forward would still change the authenticated release identity.
 
-On 2026-10-06 the GitHub audit passed all four repository-side checks. The PyPI
-project is not yet published, and no pending trusted publisher could be
-confirmed from the available unauthenticated PyPI session. Publication remains
-disabled until an administrator creates the exact pending publisher tuple and
-reruns the preflight with `--pypi-publisher-confirmed`.
+On 2026-10-08 the GitHub audit passed all four repository-side checks,
+including the exact required-reviewer identity. The PyPI project is not yet
+published, and no pending trusted publisher could be confirmed from the
+available unauthenticated PyPI session. Publication remains disabled until an
+administrator creates the exact pending publisher tuple and reruns the
+preflight with `--pypi-publisher-confirmed`.

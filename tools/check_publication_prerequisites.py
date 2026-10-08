@@ -11,6 +11,7 @@ from dataclasses import asdict, dataclass
 from typing import Any
 
 DEFAULT_REPOSITORY = "MaxwellMarcus/clifford-hierarchy-conjugation-testing"
+EXPECTED_REVIEWER = "MaxwellMarcus"
 EXPECTED_PUBLISHER = {
     "owner": "MaxwellMarcus",
     "repository": "clifford-hierarchy-conjugation-testing",
@@ -47,7 +48,7 @@ class PublicationPrerequisiteAudit:
             (self.environment_exists, "GitHub environment 'pypi' is missing"),
             (
                 self.required_reviewers_configured,
-                "GitHub environment 'pypi' has no required reviewer",
+                f"GitHub environment 'pypi' does not require reviewer {EXPECTED_REVIEWER!r}",
             ),
             (
                 self.v_tag_deployment_policy_configured,
@@ -70,16 +71,21 @@ class PublicationPrerequisiteAudit:
             "ready": self.ready,
             "checks": asdict(self),
             "failures": list(self.failures),
+            "expected_github_reviewer": EXPECTED_REVIEWER,
             "expected_pypi_publisher": EXPECTED_PUBLISHER,
         }
 
 
-def _has_required_reviewer(environment: dict[str, Any] | None) -> bool:
+def _has_expected_required_reviewer(environment: dict[str, Any] | None) -> bool:
     if environment is None:
         return False
     for rule in environment.get("protection_rules", []):
-        if rule.get("type") == "required_reviewers" and rule.get("reviewers"):
-            return True
+        if rule.get("type") != "required_reviewers":
+            continue
+        for entry in rule.get("reviewers", []):
+            reviewer = entry.get("reviewer") or {}
+            if entry.get("type") == "User" and reviewer.get("login") == EXPECTED_REVIEWER:
+                return True
     return False
 
 
@@ -127,7 +133,7 @@ def audit_publication_prerequisites(
 
     return PublicationPrerequisiteAudit(
         environment_exists=environment is not None,
-        required_reviewers_configured=_has_required_reviewer(environment),
+        required_reviewers_configured=_has_expected_required_reviewer(environment),
         v_tag_deployment_policy_configured=_has_v_tag_deployment_policy(
             environment, deployment_policies
         ),

@@ -72,9 +72,10 @@ Clifford-hierarchy decision procedure.
   and no-rebuild artifact-consumption policy is documented. The GitHub
   environment, required reviewer, `v*` deployment restriction, and immutable
   `v*` tag ruleset are live; the PyPI publisher remains pending.
-- A fail-closed preflight audits the live GitHub environment, reviewer,
+- A fail-closed preflight audits the live GitHub environment, exact
+  `MaxwellMarcus` reviewer identity,
   deployment-policy, and immutable-tag controls and requires a separate manual
-  assertion for the non-public PyPI trusted-publisher setting. The 2026-10-06
+  assertion for the non-public PyPI trusted-publisher setting. The 2026-10-08
   audit passes every GitHub check and fails closed only because the matching
   PyPI trusted publisher has not been configured or confirmed.
 

@@ -15,7 +15,7 @@ def _protected_environment() -> dict[str, object]:
         "protection_rules": [
             {
                 "type": "required_reviewers",
-                "reviewers": [{"type": "User", "reviewer": {"login": "maintainer"}}],
+                "reviewers": [{"type": "User", "reviewer": {"login": "MaxwellMarcus"}}],
             },
             {"type": "branch_policy"},
         ],
@@ -88,6 +88,24 @@ def test_environment_requires_reviewers_and_exact_v_tag_policy() -> None:
     assert not audit.required_reviewers_configured
     assert not audit.v_tag_deployment_policy_configured
     assert audit.immutable_v_tag_ruleset_configured
+
+
+def test_environment_requires_the_expected_reviewer_identity() -> None:
+    environment = _protected_environment()
+    environment["protection_rules"][0]["reviewers"] = [
+        {"type": "User", "reviewer": {"login": "different-maintainer"}}
+    ]
+
+    audit = audit_publication_prerequisites(
+        environment=environment,
+        deployment_policies=_v_tag_policy(),
+        rulesets=[_immutable_tag_ruleset()],
+        pypi_publisher_confirmed=True,
+    )
+
+    assert not audit.required_reviewers_configured
+    assert not audit.ready
+    assert "MaxwellMarcus" in audit.failures[0]
 
 
 def test_tag_ruleset_must_be_active_and_immutable() -> None:
