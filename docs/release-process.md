@@ -109,6 +109,12 @@ the tool: owner `MaxwellMarcus`, repository
 `clifford-hierarchy-conjugation-testing`, workflow `release.yml`, and
 environment `pypi`.
 
+The version-two preflight output also pins the audited GitHub repository to
+`MaxwellMarcus/clifford-hierarchy-conjugation-testing`. An alternate
+`--repository` value or `GITHUB_REPOSITORY` from a fork may expose useful
+diagnostics, but it fails closed even when that repository has otherwise
+matching controls and the manual PyPI confirmation flag is present.
+
 The `v*` tag ruleset must restrict both updates and deletions. Blocking only
 non-fast-forward changes is insufficient for an immutable release tag because
 moving a tag forward would still change the authenticated release identity.

@@ -55,7 +55,24 @@ def test_complete_external_configuration_is_ready() -> None:
 
     assert audit.ready
     assert audit.failures == ()
-    assert audit.to_dict()["schema_version"] == 1
+    assert audit.to_dict()["schema_version"] == 2
+
+
+def test_alternate_repository_cannot_satisfy_fixed_publisher_tuple() -> None:
+    audit = audit_publication_prerequisites(
+        repository="someone-else/clifford-hierarchy-conjugation-testing",
+        environment=_protected_environment(),
+        deployment_policies=_v_tag_policy(),
+        rulesets=[_immutable_tag_ruleset()],
+        pypi_publisher_confirmed=True,
+    )
+
+    assert not audit.repository_identity_matches
+    assert not audit.ready
+    assert audit.failures == (
+        "audited repository is not the expected "
+        "'MaxwellMarcus/clifford-hierarchy-conjugation-testing'",
+    )
 
 
 def test_missing_external_configuration_fails_closed() -> None:

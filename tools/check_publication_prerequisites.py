@@ -24,6 +24,7 @@ EXPECTED_PUBLISHER = {
 class PublicationPrerequisiteAudit:
     """Fail-closed result for the GitHub and PyPI publication boundary."""
 
+    repository_identity_matches: bool
     environment_exists: bool
     required_reviewers_configured: bool
     v_tag_deployment_policy_configured: bool
@@ -34,6 +35,7 @@ class PublicationPrerequisiteAudit:
     def ready(self) -> bool:
         return all(
             (
+                self.repository_identity_matches,
                 self.environment_exists,
                 self.required_reviewers_configured,
                 self.v_tag_deployment_policy_configured,
@@ -45,6 +47,10 @@ class PublicationPrerequisiteAudit:
     @property
     def failures(self) -> tuple[str, ...]:
         checks = (
+            (
+                self.repository_identity_matches,
+                f"audited repository is not the expected {DEFAULT_REPOSITORY!r}",
+            ),
             (self.environment_exists, "GitHub environment 'pypi' is missing"),
             (
                 self.required_reviewers_configured,
@@ -67,7 +73,7 @@ class PublicationPrerequisiteAudit:
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "schema_version": 1,
+            "schema_version": 2,
             "ready": self.ready,
             "checks": asdict(self),
             "failures": list(self.failures),
@@ -124,6 +130,7 @@ def _has_immutable_v_tag_ruleset(rulesets: list[dict[str, Any]]) -> bool:
 
 def audit_publication_prerequisites(
     *,
+    repository: str = DEFAULT_REPOSITORY,
     environment: dict[str, Any] | None,
     deployment_policies: dict[str, Any] | None,
     rulesets: list[dict[str, Any]],
@@ -132,6 +139,7 @@ def audit_publication_prerequisites(
     """Return a pure, testable audit of the required external controls."""
 
     return PublicationPrerequisiteAudit(
+        repository_identity_matches=repository == DEFAULT_REPOSITORY,
         environment_exists=environment is not None,
         required_reviewers_configured=_has_expected_required_reviewer(environment),
         v_tag_deployment_policy_configured=_has_v_tag_deployment_policy(
@@ -173,6 +181,7 @@ def audit_live_repository(
     summaries = _gh_api(f"{base}/rulesets")
     rulesets = [_gh_api(f"{base}/rulesets/{item['id']}") for item in summaries]
     return audit_publication_prerequisites(
+        repository=repository,
         environment=environment,
         deployment_policies=deployment_policies,
         rulesets=rulesets,

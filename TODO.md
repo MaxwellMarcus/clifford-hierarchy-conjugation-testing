@@ -1,6 +1,6 @@
 # Running TODO — Clifford-Hierarchy Conjugation Testing
 
-Last updated: 2026-10-08
+Last updated: 2026-10-31
 
 This is the operational queue for incremental development. Keep
 `docs/status-and-roadmap.md` as the higher-level project audit. Each completed
@@ -30,6 +30,12 @@ coherent unit.
 - [ ] Keep README, API documentation, version, and citation metadata aligned.
 
 ## Completed
+
+- [x] 2026-10-31 — Pin the publication preflight to the canonical GitHub
+  repository identity so an alternate `--repository` value or fork-provided
+  `GITHUB_REPOSITORY` cannot satisfy the fixed PyPI publisher tuple; bump the
+  machine-readable audit schema to version two and add an adversarial
+  regression while leaving publication disabled.
 
 - [x] 2026-10-08 — Tighten the live publication preflight so the protected
   environment must require the exact `MaxwellMarcus` reviewer identity rather
